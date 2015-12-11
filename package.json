@@ -1,0 +1,33 @@
+{
+  "name": "joblahoma",
+  "version": "1.0.0",
+  "description": "Techlahoma Job Board",
+  "main": "lib/server.js",
+  "scripts": {
+    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib --plugins transform-react-jsx --presets es2015",
+    "bundle": "./node_modules/browserify/bin/cmd.js lib/client.js -o public/js/bundle.js",
+    "start": "npm run build && npm run bundle && node lib/server.js"
+  },
+  "author": "Vance Lucas",
+  "license": "",
+  "dependencies": {
+    "bcryptjs": "^2.3.0",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "history": "^1.15.0",
+    "knex": "^0.9.0",
+    "passport": "^0.3.2",
+    "passport-http-bearer": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "pg": "^4.4.3",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-router": "^1.0.2"
+  },
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "babel-cli": "^6.1.2",
+    "babel-plugin-transform-react-jsx": "^6.0.18",
+    "babel-preset-es2015": "^6.1.2"
+  }
+}
