@@ -4,7 +4,7 @@ import { Strategy as BearerStrategy } from 'passport-http-bearer';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 // Local
-import { knex } from '../lib/db';
+import { knex } from '../server/db';
 
 // Namespace
 let User = {};
