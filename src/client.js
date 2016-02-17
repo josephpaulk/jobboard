@@ -1,7 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-// import Routes from './components/Routes'; // No longer installed!
+// import React from 'react';
+// import ReactDOM from 'react-dom';
 
-// ReactDOM.render(<Routes />, document.getElementById('content'));
+// ReactDOM.render(<Homepage />, document.getElementById('content'));
 
 
