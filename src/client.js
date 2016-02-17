@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Routes from './components/Routes';
+// import Routes from './components/Routes'; // No longer installed!
 
-ReactDOM.render(<Routes />, document.getElementById('content'));
+// ReactDOM.render(<Routes />, document.getElementById('content'));
 
 

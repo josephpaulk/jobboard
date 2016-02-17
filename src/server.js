@@ -1,12 +1,10 @@
 import React from 'react';
-import { match, RouterContext } from 'react-router';
 import ReactDOMServer from 'react-dom/server';
 import express from 'express';
 import passport from 'passport';
 
-import Homepage from './components/Homepage';
 import User from './model/user';
-import Routes from './components/Routes';
+import router from './shared/routes';
 import Error404 from './components/Error404';
 
 let app = express();
@@ -23,29 +21,27 @@ passport.use(User.passportLoginStrategy());
 
 // Render React components server-side
 app.get('/*', function (req, res) {
-  match({ routes: Routes, location: req.url }, (error, redirectLocation, renderProps) => {
-    console.log(req.url);
+  let route = router.resolve(req.url);
+  if (route) {
+    // Call route 'fetchData' method to pre-load all data
+    route.fetchData(route.params).then(function(data) {
+      let props = {
+        routeKey: route.key,
+        data: data
+      };
 
-    if (error) {
-      res.status(500).send(error.message)
-    } else if (redirectLocation) {
-      res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-    } else if (renderProps) {
-      let content = ReactDOMServer.renderToString(<RouterContext {...renderProps} />);
+      let content = ReactDOMServer.renderToString(route.component(props));
       res.status(200).render('layout', { content: content });
-    } else {
-      let content = ReactDOMServer.renderToString(<Error404 />);
-      res.status(404).render('layout', { content: content });
-    }
-  });
-});
 
-// GET /
-// app.get('/', function (req, res) {
-//   res.render('layout', {
-//     content: ReactDOMServer.renderToString(<Homepage />)
-//   });
-// });
+    }).catch(function (err) {
+      res.status(500).send(err.message)
+    });
+  } else {
+    // Show 404 route
+    let content = ReactDOMServer.renderToString(<Error404 />);
+    res.status(404).render('layout', { content: content });
+  }
+});
 
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),

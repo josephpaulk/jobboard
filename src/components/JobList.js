@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 
 export default class JobList extends React.Component {
   constructor() {
@@ -11,9 +10,9 @@ export default class JobList extends React.Component {
 
   render() {
     return (
-      <Link href={`/jobs/${1}`}>
+      <a href={`/jobs/${1}`}>
         Job Listing Title
-      </Link>
+      </a>
     );
   }
 }

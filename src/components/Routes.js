@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, Link } from 'react-router';
+import { Router, Route, Link, browserHistory } from 'react-router';
 
 import Homepage from './Homepage';
 import JobList from './JobList';
@@ -8,12 +8,12 @@ import Error404 from './Error404';
 
 export default class Routes extends React.Component {
   render() {
-    return <Router>
+    return <Router history={browserHistory}>
         <Route path="/" component={Homepage}>
-        <Route path="jobs" component={JobList}>
-        <Route path="/jobs/:id" component={JobDetail}/>
-        </Route>
-        <Route path="*" component={Error404}/>
+          <Route path="jobs" component={JobList}>
+            <Route path="/jobs/:id" component={JobDetail}/>
+          </Route>
+          <Route path="*" component={Error404}/>
         </Route>
       </Router>;
   }
