@@ -1,0 +1,18 @@
+body {
+  background: #F8F8F8;
+}
+
+#siteContent {
+  background: #fff;
+  padding: 80px;
+}
+
+#content {
+
+}
+
+#siteFooter {
+  padding: 20px 40px;
+  background: #F8F8F8;
+  border-top: 3px solid #E7E7E7;
+}

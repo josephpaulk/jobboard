@@ -47,10 +47,10 @@ exports.resolve = function(url) {
         params,
         component,
         fetchData: function() {
-          if (!component.fetchData) {
+          if (!route.component.fetchData) {
             return Promise.resolve();
           }
-          return component.fetchData.apply(null, params.concat(cb))
+          return route.component.fetchData.apply(null, params);
         }
       }
     }

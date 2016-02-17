@@ -2,11 +2,11 @@
   "name": "joblahoma",
   "version": "1.0.0",
   "description": "Techlahoma Job Board",
-  "main": "lib/server.js",
+  "main": "build/server/index.js",
   "scripts": {
-    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib --plugins transform-react-jsx --presets es2015",
-    "bundle": "./node_modules/browserify/bin/cmd.js lib/client.js -o public/js/bundle.js",
-    "start": "npm run build && npm run bundle && node lib/server.js"
+    "build": "rm -rf build && ./node_modules/babel-cli/bin/babel.js src --out-dir build --plugins transform-react-jsx --presets es2015",
+    "bundle": "./node_modules/browserify/bin/cmd.js build/client/index.js -o public/js/bundle.js",
+    "start": "npm run build && npm run bundle && node build/server/index.js"
   },
   "author": "Vance Lucas",
   "license": "",

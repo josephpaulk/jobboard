@@ -6,8 +6,12 @@ export default class Homepage extends React.Component {
     return (
       <div>
         <p>Hello world!</p>
-        <JobList />
+        <JobList {...this.props} />
       </div>
     );
+  }
+
+  static fetchData(params) {
+    return JobList.fetchData(params);
   }
 }

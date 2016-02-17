@@ -3,9 +3,9 @@ import ReactDOMServer from 'react-dom/server';
 import express from 'express';
 import passport from 'passport';
 
-import User from './model/user';
-import router from './shared/routes';
-import Error404 from './components/Error404';
+import User from '../model/user';
+import router from '../shared/routes';
+import Error404 from '../components/Error404';
 
 let app = express();
 
@@ -24,15 +24,12 @@ app.get('/*', function (req, res) {
   let route = router.resolve(req.url);
   if (route) {
     // Call route 'fetchData' method to pre-load all data
-    route.fetchData(route.params).then(function(data) {
-      let props = {
-        routeKey: route.key,
-        data: data
-      };
-
-      let content = ReactDOMServer.renderToString(route.component(props));
+    route.fetchData(route.params).then(function(props) {
+      let component = route.component(props);
+      let content = ReactDOMServer.renderToString(component);
       res.status(200).render('layout', { content: content });
 
+    // Handle errors
     }).catch(function (err) {
       res.status(500).send(err.message)
     });

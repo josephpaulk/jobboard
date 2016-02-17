@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>Joblahoma</title>
   <!-- Scripts and styles here -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/main.css">
 </head>
-<body class="container">
+<body>
+  <div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header pull-left">
+        <a href="/" target="_top" class="navbar-brand">Joblahoma</a>
+      </div>
+      <ul class="nav navbar-nav pull-right">
+        <li>
+          <a href="#">Post a Job</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-  <header>
-    <h1>Hello World App</h1>
-  </header>
+  <div id="siteContent">
+    <div class="container">
+      <section id="content"><%- content %></section>
+    </div>
+  </div>
 
-  <section id="content"><%- content %></section>
-
-  <footer>
-    <p>&copy; Nobody</p>
+  <footer id="siteFooter">
+    <div class="container">
+      <p>&copy; Nobody</p>
+    </div>
   </footer>
 
   <!-- Include our bundled JS -->
