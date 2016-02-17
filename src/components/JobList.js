@@ -2,7 +2,7 @@ import React from 'react';
 
 export default class JobList extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       jobs: props.jobs || []
     };
@@ -11,15 +11,19 @@ export default class JobList extends React.Component {
   render() {
     return (
       <div className="panel panel-default">
-        <div className="panel-heading">Current Jobs</div>
-        <div className="panel-body">
-          Panel content
+        <div className="panel-heading">
+          <h3 className="panel-title">Current Jobs</h3>
         </div>
-        <ul className="list-group">
-          { this.state.jobs.map(function (job) {
-            return <li className="list-group-item" key={job.id}><a href={`/jobs/${job.id}`}>{ job.name }</a></li>;
+        <div className="list-group">
+          { this.props.jobs.map(function (job) {
+            return (
+              <a className="list-group-item" key={job.id} href={`/jobs/${job.id}`}>
+                <div className="pull-right">{ job.location }</div>
+                { job.title }
+              </a>
+            );
           })}
-        </ul>
+        </div>
       </div>
     );
   }
@@ -28,7 +32,7 @@ export default class JobList extends React.Component {
     let jobs = [
       {
         id: 1,
-        name: 'Director of Awesomesauce',
+        title: 'Director of Awesomesauce',
         location: 'Tulsa, OK'
       }
     ];
