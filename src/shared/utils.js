@@ -29,3 +29,13 @@ parseUri.options = {
     loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
   }
 };
+
+/**
+ * Is this code running in a Node.js environment?
+ * @link http://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
+ *
+ * @return boolean
+ */
+export function isNode() {
+  return (typeof module !== 'undefined' && this.module !== module);
+}
