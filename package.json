@@ -12,9 +12,11 @@
   "license": "",
   "dependencies": {
     "bcryptjs": "^2.3.0",
+    "body-parser": "^1.15.0",
     "ejs": "^2.3.4",
     "express": "^4.13.3",
     "history": "1.13.0",
+    "joi": "^8.0.5",
     "knex": "^0.9.0",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",

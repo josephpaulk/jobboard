@@ -1,10 +1,10 @@
 'use strict';
 
-const db = require('server/db');
+const knex = require('server/db');
+const sdkJobs = require('server/sdk/jobs');
 
-/**
- * List jobs
- */
-function currentJobListings() {
-
+function jobs() {
+  return sdkJobs;
 }
+
+module.exports = { jobs };

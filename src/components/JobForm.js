@@ -13,33 +13,34 @@ class JobForm extends React.Component {
 
     return (
       <div>
-        <form className="form-horizontal">
+        <form className="form-horizontal" method="post" action="/jobs">
           <fieldset>
             <legend>Post a New Job</legend>
             <div className="form-group">
               <label htmlFor="title" className="col-lg-2 control-label">Job Title</label>
               <div className="col-lg-10">
-                <input type="text" className="form-control" id="title" />
+                <input type="text" className="form-control" id="title" name="title" />
                 <span className="help-block">"Senior JavaScript Programmer" or "DevOps Engineer"</span>
               </div>
             </div>
             <div className="form-group">
               <label htmlFor="location" className="col-lg-2 control-label">Location</label>
               <div className="col-lg-10">
-                <input type="text" className="form-control" id="location" />
+                <input type="text" className="form-control" id="location" name="location" />
                 <span className="help-block">"Tulsa, OK" or "Oklahoma City, OK", etc.</span>
               </div>
             </div>
             <div className="form-group">
               <label htmlFor="description" className="col-lg-2 control-label">Job Description</label>
               <div className="col-lg-10">
-                <textarea className="form-control" rows="3" id="description"></textarea>
+                <textarea className="form-control" rows="3" id="description" name="description"></textarea>
                 <span className="help-block">Full description of your job listing. Markdown supported.</span>
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-2 control-label">Category</label>
               <div className="col-lg-10">
+                <input type="hidden" name="company_name" value="" />
                 { config.jobs.categories.map((categoryName) => {
                   return (
                     <div className="radio" key={ `category_${categoryName}` }>
@@ -59,28 +60,28 @@ class JobForm extends React.Component {
             <div className="form-group">
               <label htmlFor="company_name" className="col-lg-2 control-label">Name</label>
               <div className="col-lg-10">
-                <input type="text" className="form-control" id="company_name" />
+                <input type="text" className="form-control" id="company_name" name="company_name" />
                 <span className="help-block">Your company or organization's name</span>
               </div>
             </div>
             <div className="form-group">
               <label htmlFor="company_logo_url" className="col-lg-2 control-label">Logo URL</label>
               <div className="col-lg-10">
-                <input type="text" className="form-control" id="company_logo_url" />
+                <input type="text" className="form-control" id="company_logo_url" name="company_logo_url" />
                 <span className="help-block">Optional &mdash; URL to your company logo - will be displayed with 200px width.</span>
               </div>
             </div>
             <div className="form-group">
               <label htmlFor="company_url" className="col-lg-2 control-label">Website URL</label>
               <div className="col-lg-10">
-                <input type="text" className="form-control" id="company_url" />
+                <input type="text" className="form-control" id="company_url" name="company_url" />
                 <span className="help-block">http://example.com/us/jobs</span>
               </div>
             </div>
             <div className="form-group">
               <label htmlFor="company_email" className="col-lg-2 control-label">Email</label>
               <div className="col-lg-10">
-                <input type="text" className="form-control" id="company_email" />
+                <input type="text" className="form-control" id="company_email" name="company_email" />
                 <span className="help-block">Where we'll send your reciept and confirmation email</span>
               </div>
             </div>
