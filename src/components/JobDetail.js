@@ -1,6 +1,8 @@
-import React from 'react';
+'use strict';
 
-export default class JobList extends React.Component {
+const React = require('react');
+
+class JobDetail extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -23,3 +25,5 @@ export default class JobList extends React.Component {
     );
   }
 }
+
+module.exports = JobDetail;

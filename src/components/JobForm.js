@@ -1,7 +1,9 @@
-import React from 'react';
-import config from '../shared/config';
+'use strict';
 
-export default class JobForm extends React.Component {
+const React = require('react');
+const config = require('shared/config');
+
+class JobForm extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -94,3 +96,5 @@ export default class JobForm extends React.Component {
     );
   }
 }
+
+module.exports = JobForm;

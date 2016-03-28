@@ -1,7 +1,9 @@
-import React from 'react';
-import JobList from './JobList';
+'use strict';
 
-export default class Homepage extends React.Component {
+const React = require('react');
+const JobList = require('components/JobList');
+
+class Homepage extends React.Component {
   render() {
     return (
       <div>
@@ -15,3 +17,5 @@ export default class Homepage extends React.Component {
     return JobList.fetchData(params);
   }
 }
+
+module.exports = Homepage;

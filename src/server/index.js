@@ -1,11 +1,20 @@
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import express from 'express';
-import passport from 'passport';
+'use strict';
 
-import User from '../model/user';
-import router from '../shared/routes';
-import Error404 from '../components/Error404';
+// Babel register ONLY for 'components' folder so there is no compile step
+require("babel-register")({
+  presets: ['react'],
+  only: /components/,
+  extensions: [".jsx", ".js"]
+});
+
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const express = require('express');
+const passport = require('passport');
+
+const User = require('model/user');
+const router = require('shared/routes');
+const Error404 = require('components/Error404');
 
 let app = express();
 
@@ -35,7 +44,7 @@ app.get('/*', function (req, res) {
     });
   } else {
     // Show 404 route
-    let content = ReactDOMServer.renderToString(<Error404 />);
+    let content = ReactDOMServer.renderToString(React.createElement(Error404));
     res.status(404).render('layout', { content: content });
   }
 });

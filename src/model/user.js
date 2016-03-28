@@ -1,10 +1,12 @@
+'use strict';
+
 // NPM
-import bcrypt from 'bcryptjs';
-import { Strategy as BearerStrategy } from 'passport-http-bearer';
-import { Strategy as LocalStrategy } from 'passport-local';
+const bcrypt = require('bcryptjs');
+const BearerStrategy = require('passport-http-bearer').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 
 // Local
-import { knex } from '../server/db';
+const knex = require('server/db');
 
 // Namespace
 let User = {};

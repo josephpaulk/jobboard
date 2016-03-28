@@ -1,8 +1,10 @@
+'use strict';
+
 // parseUri 1.2.2
 // (c) Steven Levithan <stevenlevithan.com>
 // MIT License
 // @link http://blog.stevenlevithan.com/archives/parseuri
-export function parseUri (str) {
+function parseUri (str) {
   var o   = parseUri.options,
     m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
     uri = {},
@@ -36,6 +38,8 @@ parseUri.options = {
  *
  * @return boolean
  */
-export function isNode() {
+function isNode() {
   return (typeof module !== 'undefined' && this.module !== module);
 }
+
+module.exports = { parseUri, isNode };

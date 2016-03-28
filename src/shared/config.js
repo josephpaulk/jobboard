@@ -1,5 +1,6 @@
+'use strict';
 
-export default {
+module.exports = {
   jobs: {
     categories: [
       'Programming',

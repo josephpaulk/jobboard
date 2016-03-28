@@ -1,11 +1,13 @@
-import React from 'react';
-import pathToRegexp from 'path-to-regexp';
-import { parseUri } from '../shared/utils';
-import Homepage from '../components/Homepage';
-import JobList from '../components/JobList';
-import JobForm from '../components/JobForm';
-import JobDetail from '../components/JobDetail';
-import UserLogin from '../components/UserLogin';
+'use strict';
+
+const React = require('react');
+const pathToRegexp = require('path-to-regexp');
+const parseUri = require('shared/utils').parseUri;
+const Homepage = require('components/Homepage');
+const JobList = require('components/JobList');
+const JobForm = require('components/JobForm');
+const JobDetail = require('components/JobDetail');
+const UserLogin = require('components/UserLogin');
 
 // Super simple router since I could not get react-router rendering properly server-side
 // @link https://www.npmjs.com/package/react-server-routing-example
@@ -69,4 +71,4 @@ exports.resolve = function(url) {
       }
     }
   }
-}
+};

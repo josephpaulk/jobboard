@@ -1,6 +1,8 @@
-import React from 'react';
+'use strict';
 
-export default class UserLogin extends React.Component {
+const React = require('react');
+
+class UserLogin extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -38,3 +40,5 @@ export default class UserLogin extends React.Component {
     );
   }
 }
+
+module.exports = UserLogin;

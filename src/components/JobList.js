@@ -1,6 +1,8 @@
-import React from 'react';
+'use strict';
 
-export default class JobList extends React.Component {
+const React = require('react');
+
+class JobList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,3 +42,5 @@ export default class JobList extends React.Component {
     return Promise.resolve({ jobs });
   }
 }
+
+module.exports = JobList;
