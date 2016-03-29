@@ -10,6 +10,8 @@ class JobForm extends React.Component {
 
   render() {
     let job = this.props.job || {};
+    let categories = config.jobs.categories;
+    let telecommute = config.jobs.telecommute;
 
     return (
       <div>
@@ -40,13 +42,27 @@ class JobForm extends React.Component {
             <div className="form-group">
               <label className="col-lg-2 control-label">Category</label>
               <div className="col-lg-10">
-                <input type="hidden" name="company_name" value="" />
-                { config.jobs.categories.map((categoryName) => {
+                { Object.keys(categories).map((categoryKey) => {
                   return (
-                    <div className="radio" key={ `category_${categoryName}` }>
+                    <div className="radio" key={ `category_${categoryKey}` }>
                       <label>
-                        <input type="radio" name="category" id={ `category_${categoryName}` } value={categoryName} checked="" />
-                        { categoryName }
+                        <input type="radio" name="category" id={ `category_${categoryKey}` } value={categoryKey} checked="" />
+                        { categories[categoryKey] }
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="col-lg-2 control-label">Work Location</label>
+              <div className="col-lg-10">
+                { Object.keys(telecommute).map((key) => {
+                  return (
+                    <div className="radio" key={ `remote_work_${key}` }>
+                      <label>
+                        <input type="radio" name="telecommute" id={ `remote_work_${key}` } value={key} checked="" />
+                        { telecommute[key] }
                       </label>
                     </div>
                   );
@@ -58,28 +74,28 @@ class JobForm extends React.Component {
           <fieldset>
             <legend>About the Company</legend>
             <div className="form-group">
-              <label htmlFor="company_name" className="col-lg-2 control-label">Name</label>
+              <label htmlFor="company_name" className="col-lg-2 control-label">Company Name</label>
               <div className="col-lg-10">
                 <input type="text" className="form-control" id="company_name" name="company_name" />
                 <span className="help-block">Your company or organization's name</span>
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="company_logo_url" className="col-lg-2 control-label">Logo URL</label>
+              <label htmlFor="company_logo_url" className="col-lg-2 control-label">Company Logo URL</label>
               <div className="col-lg-10">
                 <input type="text" className="form-control" id="company_logo_url" name="company_logo_url" />
                 <span className="help-block">Optional &mdash; URL to your company logo - will be displayed with 200px width.</span>
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="company_url" className="col-lg-2 control-label">Website URL</label>
+              <label htmlFor="company_url" className="col-lg-2 control-label">Company Website URL</label>
               <div className="col-lg-10">
                 <input type="text" className="form-control" id="company_url" name="company_url" />
                 <span className="help-block">http://example.com/us/jobs</span>
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="company_email" className="col-lg-2 control-label">Email</label>
+              <label htmlFor="company_email" className="col-lg-2 control-label">Company Email</label>
               <div className="col-lg-10">
                 <input type="text" className="form-control" id="company_email" name="company_email" />
                 <span className="help-block">Where we'll send your reciept and confirmation email</span>

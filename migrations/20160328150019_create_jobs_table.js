@@ -6,6 +6,7 @@ exports.up = function(knex, Promise) {
     t.string('location').notNull();
     t.string('description').notNull();
     t.string('category').notNull();
+    t.string('telecommute').notNull();
     t.string('company_name').notNull();
     t.string('company_url').notNull();
     t.string('company_logo_url').nullable();

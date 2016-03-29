@@ -32,7 +32,15 @@ app.use(express.static('public'));
 // Parse body params
 app.use(bodyParser.json())
 // create application/x-www-form-urlencoded parser
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+function wrapReactComponentInLayout(response, component, props = {}, layout = 'layout') {
+  let jsxToRender = React.createElement(App, { children: [component] });
+  response.render(layout, {
+    content: ReactDOMServer.renderToString(jsxToRender),
+    react_props: JSON.stringify(props)
+  });
+}
 
 // Match shared routes rendered by React components
 app.get('*', function(req, res) {
@@ -51,12 +59,8 @@ app.get('*', function(req, res) {
           data,
           qs: match.urlParts.queryKey
         };
-        let jsxToRender = React.createElement(App, { children: [match.factory(props)] });
         let layout = match.component.layout || 'layout';
-        res.render(layout, {
-          content: ReactDOMServer.renderToString(jsxToRender),
-          react_props: JSON.stringify(props)
-        });
+        wrapReactComponentInLayout(res, match.factory(props), props, layout);
       }).catch(function (err) {
         // @TODO: Create error template to show errors in
         if (isDevEnv) {
@@ -83,13 +87,14 @@ app.post('/jobs', function (req, res) {
   sdk.jobs()
     .create(req.body)
     .then(function(job) {
-      res.json({ job });
+      // res.json({ job });
     }).catch(function (err) {
       if (isDevEnv) {
         console.log(err, err.stack.split('\n'));
       }
 
-      res.json({ error: err.message });
+      let props = { data: req.body }; // should re-fill form fields
+      wrapReactComponentInLayout(res, JobForm, props, layout);
     });
 });
 

@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const sdk = require('server/sdk');
 
 class JobList extends React.Component {
   constructor(props) {
@@ -8,7 +9,7 @@ class JobList extends React.Component {
   }
 
   render() {
-    let jobs = this.props.data.jobs;
+    let jobs = this.props.data || [];
 
     return (
       <div className="panel panel-default">
@@ -16,6 +17,7 @@ class JobList extends React.Component {
           <h3 className="panel-title">Current Jobs</h3>
         </div>
         <div className="list-group">
+          { jobs.length === 0 ? this._renderNoJobs() : undefined}
           { jobs.map(function (job) {
             return (
               <a className="list-group-item" key={job.id} href={`/jobs/${job.id}`}>
@@ -29,16 +31,17 @@ class JobList extends React.Component {
     );
   }
 
-  static fetchData(params) {
-    let jobs = [
-      {
-        id: 1,
-        title: 'Director of Awesomesauce',
-        location: 'Tulsa, OK'
-      }
-    ];
+  _renderNoJobs() {
+    return (
+      <div className="panel-body">
+        <p>No jobs to show :-(.</p>
+        <p>Maybe consider adding one?</p>
+      </div>
+    );
+  }
 
-    return Promise.resolve({ jobs });
+  static fetchData(params) {
+    return sdk.jobs().allActive();
   }
 }
 

@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const sdk = require('server/sdk');
 
 class JobDetail extends React.Component {
   constructor(props) {
@@ -8,7 +9,7 @@ class JobDetail extends React.Component {
   }
 
   render() {
-    let job = this.props.job || {};
+    let job = this.props.data || {};
 
     return (
       <div className="panel panel-default">
@@ -19,10 +20,14 @@ class JobDetail extends React.Component {
           <a href={`/jobs/${1}`}>
             { job.title }
           </a>
-          [ Job description here... ]
+          <p>{ job.description }</p>
         </div>
       </div>
     );
+  }
+
+  static fetchData(props) {
+    return sdk.jobs().findById(parseInt(props.id));
   }
 }
 
