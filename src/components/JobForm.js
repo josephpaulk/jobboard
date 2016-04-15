@@ -3,10 +3,27 @@
 const React = require('react');
 const config = require('shared/config');
 
-class JobForm extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const JobForm = React.createClass({
+  getInitialState() {
+    return {
+      title: null,
+      location: null,
+      description: null,
+      category: null,
+      telecommute: null,
+      company_name: null,
+      company_logo_url: null,
+      company_url: null,
+      company_email: null
+    }
+  },
+
+  onFormChange(e) {
+    console.log('> Form onChange()');
+    let state = Object.assign({}, this.state, {[e.target.name]: e.target.value})
+    this.setState(state);
+    this.props.onChange(state);
+  },
 
   render() {
     let job = this.props.job || {};
@@ -14,8 +31,8 @@ class JobForm extends React.Component {
     let telecommute = config.jobs.telecommute;
 
     return (
-      <div>
-        <form className="form-horizontal" method="post" action="/jobs">
+      <div className="job-form">
+        <form className="form-horizontal" method="post" action="/jobs" onChange={this.onFormChange}>
           <fieldset>
             <legend>Post a New Job</legend>
             <div className="form-group">
@@ -35,38 +52,28 @@ class JobForm extends React.Component {
             <div className="form-group">
               <label htmlFor="description" className="col-lg-2 control-label">Job Description</label>
               <div className="col-lg-10">
-                <textarea className="form-control" rows="3" id="description" name="description"></textarea>
+                <textarea className="form-control" id="description" name="description" value={this.state.description} />
                 <span className="help-block">Full description of your job listing. Markdown supported.</span>
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-2 control-label">Category</label>
               <div className="col-lg-10">
-                { Object.keys(categories).map((categoryKey) => {
-                  return (
-                    <div className="radio" key={ `category_${categoryKey}` }>
-                      <label>
-                        <input type="radio" name="category" id={ `category_${categoryKey}` } value={categoryKey} checked="" />
-                        { categories[categoryKey] }
-                      </label>
-                    </div>
-                  );
-                })}
+                <select name="category">
+                  { Object.keys(categories).map((categoryKey) => {
+                    return <option key={ `category_${categoryKey}` } value={categoryKey}> { categories[categoryKey] } </option>;
+                  })}
+                </select>
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-2 control-label">Work Location</label>
               <div className="col-lg-10">
-                { Object.keys(telecommute).map((key) => {
-                  return (
-                    <div className="radio" key={ `remote_work_${key}` }>
-                      <label>
-                        <input type="radio" name="telecommute" id={ `remote_work_${key}` } value={key} checked="" />
-                        { telecommute[key] }
-                      </label>
-                    </div>
-                  );
-                })}
+                <select name="telecommute">
+                  { Object.keys(telecommute).map((key) => {
+                    return <option key={ `remote_work_${key}` } value={key}> { telecommute[key] } </option>;
+                  })}
+                </select>
               </div>
             </div>
           </fieldset>
@@ -112,6 +119,6 @@ class JobForm extends React.Component {
       </div>
     );
   }
-}
+});
 
 module.exports = JobForm;

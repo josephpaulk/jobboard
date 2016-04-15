@@ -14,7 +14,7 @@ function allActive() {
   let now = new Date();
 
   return knex(TABLE_NAME)
-    .where('dt_expires', '<=', now)
+    .where('dt_expires', '>=', now)
     .andWhere('is_live', true);
 }
 
