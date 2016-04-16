@@ -34,14 +34,14 @@ function findById(id) {
  */
 function create(params) {
   return validator.params(params, {
-      'title': Joi.string().length(60).required(),
-      'location': Joi.string().length(60).required(),
+      'title': Joi.string().max(60).required(),
+      'location': Joi.string().max(60).required(),
       'description': Joi.string().required(),
       'category': Joi.string().required().valid(Object.keys(config.jobs.categories)), // One of pre-defined categories keys
       'telecommute': Joi.string().required().valid(Object.keys(config.jobs.telecommute)), // One of pre-defined telecommute keys
       'company_name': Joi.string().required(),
       'company_url': Joi.string().uri().lowercase().required(),
-      'company_logo_url': Joi.string().uri().lowercase().trim().allow('').replace(/$^/, null),
+      'company_logo_url': Joi.string().uri().lowercase().trim().allow(['', null]),
       'company_email': Joi.string().email().lowercase().required()
     }).then(function (params) {
       let now = new Date();
@@ -70,7 +70,7 @@ function create(params) {
         .returning('id') // Postgres only!
         .then(function (id) {
           // Return job object with insert id
-          return Object.assign({ id }, storedJob);
+          return Promise.resolve(Object.assign({ id: id[0] }, storedJob));
         });
     });
 }

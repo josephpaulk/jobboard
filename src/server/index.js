@@ -18,6 +18,7 @@ const sdk = require('server/sdk');
 
 // React components
 const App = require('components/App');
+const JobCreate = require('components/JobCreate');
 const Error404 = require('components/Error404');
 
 let app = express();
@@ -83,19 +84,15 @@ app.get('*', function(req, res) {
 });
 
 // Post new job
-app.post('/jobs', function (req, res) {
+app.post('/api/jobs', function (req, res) {
+  console.log(req);
+
   sdk.jobs()
     .create(req.body)
     .then(function(job) {
-      // res.json({ job });
-    }).catch(function (err) {
-      if (isDevEnv) {
-        console.log(err, err.stack.split('\n'));
-      }
-
-      let props = { data: req.body }; // should re-fill form fields
-      wrapReactComponentInLayout(res, JobForm, props, layout);
-    });
+      res.json({ job });
+    })
+    .catch(sdk.respondWithError(req, res));
 });
 
 /**

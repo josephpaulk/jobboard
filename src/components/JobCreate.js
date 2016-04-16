@@ -16,7 +16,6 @@ const JobCreate = React.createClass({
   },
 
   onFormChange(job) {
-    console.log(job);
     this.setState({ job });
   },
 

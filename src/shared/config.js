@@ -15,7 +15,7 @@ module.exports = {
     telecommute: {
       none: 'On-Site',
       partial: 'Partial Telecommute',
-      full: 'Full-Time Telecommute',
+      full: 'Full-Time Telecommute (Remote)',
       flexible: 'Flexible / Negotiable'
     }
   }
