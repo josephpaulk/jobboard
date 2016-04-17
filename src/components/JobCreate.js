@@ -6,7 +6,9 @@ const JobDetail = require('components/JobDetail');
 
 const JobCreate = React.createClass({
   statics: {
-    layout: 'job_create'
+    layout: 'job_create',
+    js: ['/js/simplemde.min.js'],
+    css: ['/css/simplemde.min.css']
   },
 
   getInitialState() {

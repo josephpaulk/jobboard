@@ -24,11 +24,20 @@ class JobDetail extends React.Component {
               <h3 className="panel-title">{ job.title }</h3>
             </div>
             <div className="panel-body">
-              <ul className="list-group job-meta-info">
-                <li className="list-group-item">Location: <span className="job-meta-info-value">{ job.location }</span></li>
-                <li className="list-group-item">Category: <span className="job-meta-info-value">{ job_category }</span></li>
-                <li className="list-group-item">Work Location: <span className="job-meta-info-value">{ job_telecommute }</span></li>
-              </ul>
+              <table className="table job-meta-info">
+                <tr>
+                  <td>Location</td>
+                  <td className="job-meta-info-value">{ job.location }</td>
+                </tr>
+                <tr>
+                  <td>Category</td>
+                  <td className="job-meta-info-value">{ job_category}</td>
+                </tr>
+                <tr>
+                  <td>Work At:</td>
+                  <td className="job-meta-info-value">{ job_telecommute }</td>
+                </tr>
+              </table>
 
               <div className="job-description" dangerouslySetInnerHTML={{__html: marked(job.description || '')}} />
             </div>

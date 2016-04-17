@@ -35,14 +35,6 @@ app.use(bodyParser.json())
 // create application/x-www-form-urlencoded parser
 app.use(bodyParser.urlencoded({ extended: false }));
 
-function wrapReactComponentInLayout(response, component, props = {}, layout = 'layout') {
-  let jsxToRender = React.createElement(App, { children: [component] });
-  response.render(layout, {
-    content: ReactDOMServer.renderToString(jsxToRender),
-    react_props: JSON.stringify(props)
-  });
-}
-
 // Match shared routes rendered by React components
 app.get('*', function(req, res) {
   let match = routes.match(req.url);
@@ -60,8 +52,15 @@ app.get('*', function(req, res) {
           data,
           qs: match.urlParts.queryKey
         };
-        let layout = match.component.layout || 'layout';
-        wrapReactComponentInLayout(res, match.factory(props), props, layout);
+        let component = match.component;
+        let layout = component.layout || 'layout';
+        let jsxToRender = React.createElement(App, { children: [component] });
+        res.render(layout, {
+          content: ReactDOMServer.renderToString(jsxToRender),
+          js: component.js || [],
+          css: component.css || [],
+          react_props: JSON.stringify(props)
+        });
       }).catch(function (err) {
         // @TODO: Create error template to show errors in
         if (isDevEnv) {
@@ -70,6 +69,8 @@ app.get('*', function(req, res) {
 
         res.status(500).render('layout', {
           content: err,
+          js: [],
+          css: [],
           react_props: JSON.stringify({})
         });
       });

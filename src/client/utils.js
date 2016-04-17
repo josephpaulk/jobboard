@@ -30,7 +30,7 @@ function fetchApi(url, params) {
 
       // OK, continue...
       if (httpStatus >= 200 && httpStatus < 300) {
-        return response;
+        return Promise.resolve(response);
 
       // Error, throw!
       } else {

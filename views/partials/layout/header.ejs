@@ -4,8 +4,13 @@
   <title>Joblahoma</title>
   <meta charset="utf-8" />
 
-  <link rel="stylesheet" href="/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <% if (css && css.length) { %>
+    <!-- Added CSS -->
+    <% for(var i=0; i < css.length; i++) {%><link rel="stylesheet" href="<%= css[i] %>" />
+    <% } %>
+  <% } %>
 </head>
 <body>
   <div class="navbar navbar-default navbar-fixed-top">

@@ -23,6 +23,19 @@ const JobForm = React.createClass({
     }
   },
 
+  componentDidMount() {
+    // SimpleMDE script and CSS are required in the 'views/job_create.ejs' layout to not bloat the bundle.js size
+    var simplemde = new SimpleMDE({
+      element: document.getElementById("description"),
+      toolbar: ['bold', 'italic', 'heading-3', 'unordered-list', 'ordered-list', 'quote', 'code', 'link', 'guide']
+    });
+
+    // Update on change
+    simplemde.codemirror.on("change", () => {
+      this.onFormChange({ target: { name: 'description', value: simplemde.value() } });
+    });
+  },
+
   onFormChange(e) {
     let data = Object.assign({}, this.state.data, {[e.target.name]: e.target.value})
     this.setState({ data });
@@ -33,12 +46,12 @@ const JobForm = React.createClass({
     e.preventDefault();
 
     sdk.jobs().create(this.state.data)
-      .then((job) => {
-        alert('Job created!');
-        window.location = '/';
-      })
       .catch((err) => {
         this.setState({ field_errors: err.field_errors });
+      })
+      .then((job) => {
+        alert('Your job has been created, and is awaiting admin approval!');
+        window.location = '/';
       });
   },
 
@@ -74,9 +87,8 @@ const JobForm = React.createClass({
             </div>
             <div className={"form-group" + getErrorClass('description')}>
               {showErrorMessage('description')}
-              <label htmlFor="description" className="control-label">Job Description</label>
+              <label htmlFor="description" className="control-label">Full Job Description</label>
               <textarea className="form-control" id="description" name="description" value={this.state.description} />
-              <span className="help-block">Full description of your job listing. Markdown supported.</span>
             </div>
             <div className={"form-group" + getErrorClass('category')}>
               {showErrorMessage('category')}

@@ -66,8 +66,6 @@ body {
   padding-right: 0;
 }
 .job-detail .job-meta-info-value {
-  display: block;
-  float: right;
   width: 60%;
   border-left: 1px solid #eee;
   margin: -10px 0;
