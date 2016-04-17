@@ -84,3 +84,21 @@ body {
 .job-detail .pagination>.disabled>a {
   cursor: text;
 }
+
+/**
+ * Bootstrap overrides
+ */
+.navbar-default .navbar-nav>li>a.navbar-btn {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #fff;
+}
+.navbar-default .navbar-nav>li>a.navbar-btn:hover,
+.navbar-default .navbar-nav>li>a.navbar-btn:active {
+  top: 0;
+  padding-top: 8px;
+  margin-top: 6px;
+  background-color: #158cba;
+  border-color: #127ba3;
+  border-bottom-width: 4px;
+}

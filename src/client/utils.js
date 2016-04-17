@@ -46,7 +46,8 @@ function fetchApi(url, params) {
 
       // Error, throw!
       } else {
-        let err = new Error('Error ' + httpStatus + ': ' + response.message);
+        let err = new Error(response.message);
+        err.error_message = response ? response.message : null;
         err.field_errors = response ? response.field_errors : {};
         throw err;
       }

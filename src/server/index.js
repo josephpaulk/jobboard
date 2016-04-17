@@ -60,26 +60,13 @@ app.post('/api/jobs', function (req, res) {
 });
 
 /**
- * @TODO: User Accounts
- *
- * I was originally going to create user accounts, logins, etc. but then I
- * decided against it in favor of making the job board *really* simple so it
- * could be launched sooner rather than later. - Vance L
+ * User login/registration, etc.
  */
-
-
 // Configure Passport for user authentication
 passport.use(sdk.users().passportTokenStrategy());
 passport.use(sdk.users().passportLoginStrategy());
 
-// app.post('/login',
-//   passport.authenticate('local', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.json({ user: req.user });
-//   }
-// );
-//
-app.post('/login', function(req, res) {
+app.post('/api/users/login', function(req, res) {
   sdk.users()
     .findByLogin(req.body.email, req.body.password)
     .then((user) => {
@@ -129,7 +116,7 @@ app.get('*', function(req, res) {
         };
         let component = match.component;
         let layout = component.layout || 'layout';
-        let jsxToRender = React.createElement(App, { children: [component] });
+        let jsxToRender = React.createElement(App, { children: match.factory(props) });
         res.render(layout, {
           content: ReactDOMServer.renderToString(jsxToRender),
           js: component.js || [],

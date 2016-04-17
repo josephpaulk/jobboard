@@ -1,12 +1,13 @@
 'use strict';
 
 const React = require('react');
-const JobListingRow = require('components/JobListingRow');
 const sdk = require('server/sdk');
 
-const JobList = React.createClass({
+const UserDashboard = React.createClass({
   statics: {
+    title: 'User Dashboard',
     fetchData(params) {
+      // @TODO: Get jobs only for current logged-in user
       return sdk.jobs().allActive();
     }
   },
@@ -17,12 +18,17 @@ const JobList = React.createClass({
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          <h3 className="panel-title">Current Jobs</h3>
+          <h3 className="panel-title">Your Job Listings</h3>
         </div>
         <div className="list-group">
-          { jobs.length === 0 ? this._renderNoJobs() : undefined}
+          { jobs.length === 0 ? this._renderNoJobs() : null }
           { jobs.map(function (job) {
-            return <JobListingRow job={job} />;
+            return (
+              <a className="list-group-item" key={job.id} href={`/jobs/${job.id}`}>
+                <div className="pull-right">{ job.location }</div>
+                { job.title }
+              </a>
+            );
           })}
         </div>
       </div>
@@ -32,11 +38,11 @@ const JobList = React.createClass({
   _renderNoJobs() {
     return (
       <div className="panel-body">
-        <p>No jobs to show :-(.</p>
+        <p>You have not created any job listings yet.</p>
         <p>Maybe consider <a href="/jobs/create">adding one?</a></p>
       </div>
     );
   }
 });
 
-module.exports = JobList;
+module.exports = UserDashboard;

@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const ErrorMessage = require('components/shared/ErrorMessage');
 const config = require('shared/config');
 const sdk = require('server/sdk');
 
@@ -19,6 +20,7 @@ const JobForm = React.createClass({
         company_url: null,
         company_email: null
       },
+      error_message: null,
       field_errors: {}
     }
   },
@@ -46,13 +48,13 @@ const JobForm = React.createClass({
     e.preventDefault();
 
     sdk.jobs().create(this.state.data)
-      .catch((err) => {
-        this.setState({ field_errors: err.field_errors });
-      })
       .then((job) => {
         alert('Your job has been created, and is awaiting admin approval!');
         window.location = '/';
-      });
+      })
+      .catch((err) => {
+        this.setState({ error_message: err.message, field_errors: err.field_errors });
+      })
   },
 
   render() {
@@ -70,9 +72,10 @@ const JobForm = React.createClass({
 
     return (
       <div className="job-form">
-        <form className="form-vertical" method="post" action="/jobs" onChange={this.onFormChange} onSubmit={this.onFormSubmit}>
+        <form className="form-vertical" onChange={this.onFormChange} onSubmit={this.onFormSubmit}>
           <fieldset>
             <legend>Post a New Job</legend>
+            <ErrorMessage message={this.state.error_message} />
             <div className={"form-group" + getErrorClass('title')}>
               {showErrorMessage('title')}
               <label htmlFor="title" className="control-label">Job Title</label>

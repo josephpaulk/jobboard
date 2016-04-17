@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const ErrorMessage = require('components/shared/ErrorMessage');
 const sdk = require('server/sdk');
 
 const UserRegister = React.createClass({
@@ -15,6 +16,7 @@ const UserRegister = React.createClass({
         email: null,
         password: null
       },
+      error_message: null,
       field_errors: {}
     }
   },
@@ -34,7 +36,7 @@ const UserRegister = React.createClass({
         window.location = '/';
       })
       .catch((err) => {
-        this.setState({ field_errors: err.field_errors });
+        this.setState({ error_message: err.message, field_errors: err.field_errors });
       });
   },
 
@@ -51,6 +53,7 @@ const UserRegister = React.createClass({
       <form className="form-horizontal" method="POST" action="/register" onChange={this.onFormChange} onSubmit={this.onFormSubmit}>
         <fieldset>
           <legend>Register New User</legend>
+          <ErrorMessage message={this.state.error_message} />
           <div className={"form-group" + getErrorClass('name')}>
             <label htmlFor="name" className="col-lg-2 control-label">Name</label>
             <div className="col-lg-10">

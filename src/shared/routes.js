@@ -8,6 +8,7 @@ const JobDetail = require('components/JobDetail');
 const JobPreview = require('components/JobPreview');
 const UserLogin = require('components/UserLogin');
 const UserRegister = require('components/UserRegister');
+const UserDashboard = require('components/UserDashboard');
 
 // Setup routes
 let router = new Router();
@@ -20,5 +21,6 @@ router.get('/jobs/:id/preview', JobPreview);
 
 router.get('/login', UserLogin);
 router.get('/register', UserRegister);
+router.get('/users/dashboard', UserDashboard);
 
 module.exports = router;

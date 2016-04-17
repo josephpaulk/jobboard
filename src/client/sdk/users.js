@@ -10,10 +10,13 @@ function findById(id) {
   return utils.fetchApi('users/' + id);
 }
 
-function findByLogin(data) {
+function findByLogin(email, password) {
   return utils.fetchApi('users/login', {
     method: 'POST',
-    body: JSON.stringify(utils.withoutNullProperties(data))
+    body: JSON.stringify(utils.withoutNullProperties({
+      email,
+      password
+    }))
   });
 }
 

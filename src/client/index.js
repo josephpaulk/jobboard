@@ -16,7 +16,7 @@ if (match) {
     appInstance.setState({ error: err });
   };
   // Render as child of <App> component
-  let jsxToRender = React.createElement(App, { children: [match.factory(props)] });
+  let jsxToRender = React.createElement(App, { children: match.factory(props) });
   appInstance = ReactDOM.render(jsxToRender, document.getElementById('content'));
 } else {
   console.error('[Client] Oh noes! Route 404! :-(');
