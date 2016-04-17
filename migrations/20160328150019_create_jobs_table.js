@@ -7,15 +7,17 @@ exports.up = function(knex, Promise) {
     t.string('description').notNull();
     t.string('category').notNull();
     t.string('telecommute').notNull();
+    t.string('apply_url').notNull();
     t.string('company_name').notNull();
     t.string('company_url').notNull();
     t.string('company_logo_url').nullable();
     t.string('company_email').notNull();
-    t.boolean('is_live').notNull();
+    t.boolean('is_live').notNull().index();
     t.boolean('is_featured').notNull();
+    t.string('admin_key').notNull().index();
     t.dateTime('dt_created').notNull();
     t.dateTime('dt_updated').nullable();
-    t.dateTime('dt_expires').notNull();
+    t.dateTime('dt_expires').notNull().index();
   });
 };
 

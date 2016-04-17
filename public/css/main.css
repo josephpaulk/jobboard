@@ -39,3 +39,50 @@ body {
   color: white;
   padding: 3px 6px;
 }
+
+/**
+ * Job detial page
+ */
+.job-detail {
+  font-size: 120%;
+}
+.job-detail .job-company-info {
+  text-align: center;
+  margin-top: 30px;
+}
+.job-detail .job-company-info img {
+  min-width: 200px;
+  max-width: 100%;
+  max-height: 350px;
+  padding: 10px 0;
+}
+
+.job-detail .job-meta-info {
+  width: 35%;
+  float: right;
+  font-size: 85%;
+}
+.job-detail .job-meta-info li {
+  padding-right: 0;
+}
+.job-detail .job-meta-info-value {
+  display: block;
+  float: right;
+  width: 60%;
+  border-left: 1px solid #eee;
+  margin: -10px 0;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.job-detail .pagination {
+  margin-top: 0;
+}
+.job-detail .pagination>li>a:hover,
+.job-detail .pagination>li>a:active {
+  top: 0;
+  border-bottom-width: 4px;
+}
+.job-detail .pagination>.disabled>a {
+  cursor: text;
+}

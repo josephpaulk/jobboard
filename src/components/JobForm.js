@@ -13,6 +13,7 @@ const JobForm = React.createClass({
         description: null,
         category: null,
         telecommute: null,
+        apply_url: null,
         company_name: null,
         company_logo_url: null,
         company_url: null,
@@ -37,7 +38,6 @@ const JobForm = React.createClass({
         window.location = '/';
       })
       .catch((err) => {
-        console.log(err.field_errors);
         this.setState({ field_errors: err.field_errors });
       });
   },
@@ -98,6 +98,12 @@ const JobForm = React.createClass({
                 })}
               </select>
             </div>
+            <div className={"form-group" + getErrorClass('apply_url')}>
+              {showErrorMessage('apply_url')}
+              <label htmlFor="apply_url" className="control-label">Job Application URL</label>
+              <input type="text" className="form-control" id="apply_url" name="apply_url" />
+              <span className="help-block">http://example.com/us/jobs/4281/apply</span>
+            </div>
           </fieldset>
 
           <fieldset>
@@ -118,7 +124,7 @@ const JobForm = React.createClass({
               {showErrorMessage('company_url')}
               <label htmlFor="company_url" className="control-label">Company Website URL</label>
               <input type="text" className="form-control" id="company_url" name="company_url" />
-              <span className="help-block">http://example.com/us/jobs</span>
+              <span className="help-block">http://example.com</span>
             </div>
             <div className={"form-group" + getErrorClass('company_email')}>
               {showErrorMessage('company_email')}
