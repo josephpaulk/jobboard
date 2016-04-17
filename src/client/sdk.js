@@ -1,10 +1,12 @@
 'use strict';
 
-const sdkJobs = require('client/sdk/jobs');
-
 function jobs() {
-  return sdkJobs;
+  return require('client/sdk/jobs');
 }
 
-module.exports = { jobs };
+function users() {
+  return require('client/sdk/users');
+}
+
+module.exports = { jobs, users };
 

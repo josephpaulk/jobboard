@@ -4,8 +4,8 @@ const TABLE_NAME = 'jobs';
 const DAYS_TO_EXPIRE = parseInt(process.env.JOBS_DAYS_TO_EXPIRE) || 30;
 const crypto = require('crypto');
 const knex = require('server/db');
-const validator = require('server/validator');
 const config = require('shared/config');
+const validator = require('server/validator');
 const Joi = validator.Joi;
 
 /**

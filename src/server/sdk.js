@@ -2,10 +2,15 @@
 
 const knex = require('server/db');
 const sdkJobs = require('server/sdk/jobs');
+const sdkUsers = require('server/sdk/users');
 const errors = require('shared/errors');
 
 function jobs() {
   return sdkJobs;
+}
+
+function users() {
+  return sdkUsers;
 }
 
 
@@ -57,4 +62,4 @@ function respondWithError(req, res) {
     res.status(errorJson.http_status).json(errorJson);
   };
 }
-module.exports = { jobs, respondWithError };
+module.exports = { jobs, users, respondWithError };

@@ -23,14 +23,26 @@ function withoutNullProperties(data) {
  * Simple wrapper around fetch() API to add base API url
  */
 function fetchApi(url, params) {
-  return fetch(baseUrl + url, params)
+  let fetchParams = Object.assign({
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }, params);
+  let storedResponse;
+
+  return fetch(baseUrl + url, fetchParams)
+    .then((response) => {
+      storedResponse = response;
+      return response;
+    })
     .then((response) => response.json())
     .then((response) => {
-      let httpStatus = response.http_status;
+      let httpStatus = storedResponse.status;
 
       // OK, continue...
       if (httpStatus >= 200 && httpStatus < 300) {
-        return Promise.resolve(response);
+        return response;
 
       // Error, throw!
       } else {
