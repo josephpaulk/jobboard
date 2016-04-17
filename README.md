@@ -1,8 +1,8 @@
 # Techlahoma Job Board
 
-Initial implementation of the Techlahoma Job Board
+Node.js job board used to power Techlahoma Jobs
 
-# Installation
+## Installation
 
 Use Git to clone this app, then:
 
@@ -10,23 +10,23 @@ Use Git to clone this app, then:
 npm install
 ```
 
-# Commands
+## Commands
 
-Start the server with all the code transpiled and bundled in a single command:
+Start the server with a single command:
 
 ```
 npm run start
 ```
 
-Transpile all the ES6/ES2015 JavaScript to ES5 for Node and browsers
+Transpile all the ES6/ES2015 client-side JavaScript for browsers
 
 ```
 npm run build
 ```
 
-Bundle all the client-side JavaScript into a single file (`public/js/bundle.js`)
+Minify the JavaScript bundle for production use
 
 ```
-npm run bundle
+npm run minify
 ```
 
