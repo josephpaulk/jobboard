@@ -9,6 +9,14 @@ const validator = require('server/validator');
 const Joi = validator.Joi;
 
 /**
+ * Format results for public API
+ */
+function _formatForApi(results) {
+  // @TODO: Any formatting
+  results;
+}
+
+/**
  * List all active jobs
  */
 function allActive() {
@@ -16,7 +24,9 @@ function allActive() {
 
   return knex(TABLE_NAME)
     .where('dt_expires', '>=', now)
-    .andWhere('is_live', true);
+    .andWhere('is_live', true)
+    .orderBy('dt_expires', 'desc')
+    .then(_formatForApi);
 }
 
 /**
@@ -26,7 +36,29 @@ function findById(id) {
   return validator.params({ id }, {
       'id': Joi.number().required()
     }).then(function () {
-      return knex(TABLE_NAME).first().where('id', id);
+      return knex(TABLE_NAME)
+        .first()
+        .where('id', id)
+        .then(_formatForApi);
+    });
+}
+
+/**
+ * List all jobs for given user
+ *
+ * @param {Number} user_id
+ * @return Array
+ */
+function findByUserId(user_id) {
+  let now = new Date();
+
+  return validator.params({ user_id }, {
+      'user_id': Joi.number().required()
+    }).then(function () {
+      return knex(TABLE_NAME)
+        .where({ user_id })
+        .orderBy('dt_expires', 'desc')
+        .then(_formatForApi);
     });
 }
 
@@ -78,7 +110,8 @@ function create(params) {
         .then(function (id) {
           // Return job object with insert id
           return Promise.resolve(Object.assign({ id: id[0] }, storedJob));
-        });
+        })
+        .then(_formatForApi);
     });
 }
 

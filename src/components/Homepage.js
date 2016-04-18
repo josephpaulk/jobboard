@@ -3,19 +3,21 @@
 const React = require('react');
 const JobList = require('components/JobList');
 
-class Homepage extends React.Component {
+const Homepage = React.createClass({
+  statics: {
+    title: 'Oklahoma Tech Jobs',
+    fetchData(params) {
+      return JobList.fetchData(params);
+    }
+  },
+
   render() {
     return (
       <div>
-        <p>Hello world!</p>
         <JobList {...this.props} />
       </div>
     );
   }
-
-  static fetchData(params) {
-    return JobList.fetchData(params);
-  }
-}
+});
 
 module.exports = Homepage;

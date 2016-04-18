@@ -119,6 +119,7 @@ app.get('*', function(req, res) {
         let jsxToRender = React.createElement(App, { children: match.factory(props) });
         res.render(layout, {
           content: ReactDOMServer.renderToString(jsxToRender),
+          title: component.title,
           js: component.js || [],
           css: component.css || [],
           react_props: JSON.stringify(props)
@@ -131,6 +132,7 @@ app.get('*', function(req, res) {
 
         res.status(500).render('layout', {
           content: err,
+          title: 'Error',
           js: [],
           css: [],
           react_props: JSON.stringify({})
@@ -141,6 +143,7 @@ app.get('*', function(req, res) {
     let content = ReactDOMServer.renderToString(React.createElement(Error404));
     res.status(404).render('layout', {
       content,
+      title: 'Not Found',
       js: [],
       css: [],
       react_props: JSON.stringify({})
