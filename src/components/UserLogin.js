@@ -3,6 +3,7 @@
 const React = require('react');
 const ErrorMessage = require('components/shared/ErrorMessage');
 const sdk = require('server/sdk');
+const Cookies = require('cookies-js');
 
 const UserLogin = React.createClass({
   statics: {
@@ -31,8 +32,11 @@ const UserLogin = React.createClass({
 
     sdk.users()
       .findByLogin(data.email, data.password)
-      .then((user) => {
-        window.location = '/user/dashboard';
+      .then((data) => {
+        let user = data.user;
+        // Set browser cookie with the result
+        Cookies.set('user', JSON.stringify({ email: user.email, access_token: user.access_token }));
+        window.location = '/users/dashboard';
       })
       .catch((err) => {
         this.setState({ error_message: err.message, field_errors: err.field_errors });

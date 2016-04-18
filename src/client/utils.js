@@ -1,4 +1,5 @@
 const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:1339/api/' : 'http://localhost:1339/api/';
+const Cookies = require('cookies-js');
 
 /**
  * Delete null properties from object
@@ -23,15 +24,21 @@ function withoutNullProperties(data) {
  * Simple wrapper around fetch() API to add base API url
  */
 function fetchApi(url, params) {
-  let fetchParams = Object.assign({
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  }, params);
   let storedResponse;
+  let headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  };
 
-  return fetch(baseUrl + url, fetchParams)
+  // Add token from cookie is present
+  if (Cookies.get('user')) {
+    headers['Authorization'] = 'Bearer ' + Cookies.get('user').access_token;
+  }
+
+  return fetch(baseUrl + url, Object.assign({
+      credentials: 'same-origin',
+      headers
+    }, params))
     .then((response) => {
       storedResponse = response;
       return response;

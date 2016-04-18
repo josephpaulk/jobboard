@@ -49,8 +49,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Post new job
 app.post('/api/jobs', function (req, res) {
-  console.log(req);
-
   sdk.jobs()
     .create(req.body)
     .then(function(job) {
@@ -63,19 +61,29 @@ app.post('/api/jobs', function (req, res) {
  * User login/registration, etc.
  */
 // Configure Passport for user authentication
+app.use(passport.initialize());
 passport.use(sdk.users().passportTokenStrategy());
 passport.use(sdk.users().passportLoginStrategy());
+
+/**
+ * Set 'access_token' in request body for Passport.js to pick up if browser
+ * cookie is set (Passport.js doesn't read cookies by default)
+ */
+app.use(function (req, res, next) {
+  if (req.cookies.user) {
+    let userCookieValue = JSON.parse(req.cookies.user);
+    if (userCookieValue.access_token) {
+      req.body.access_token = userCookieValue.access_token;
+    }
+  }
+
+  next();
+});
 
 app.post('/api/users/login', function(req, res) {
   sdk.users()
     .findByLogin(req.body.email, req.body.password)
     .then((user) => {
-      console.log(user);
-
-      // Set user cookie on successful login
-      var userCookieValue = { email: user.email, access_token: user.access_token };
-      res.cookie('user', userCookieValue, { signed: true });
-
       res.json({ user });
     })
     .catch(sdk.respondWithError(req, res));
@@ -89,13 +97,13 @@ app.post('/api/users/register', function (req, res) {
     })
     .catch(sdk.respondWithError(req, res));
 });
-//
-// app.get('/access_token',
-//   passport.authenticate('bearer', { session: false }),
-//   function(req, res) {
-//     res.json({ user: req.user });
-//   }
-// );
+
+app.get('/users/dashboard',
+  passport.authenticate('bearer', { session: false }),
+  function(req, res) {
+    res.json({ user: req.user });
+  }
+);
 
 // Match shared routes rendered by React components
 app.get('*', function(req, res) {

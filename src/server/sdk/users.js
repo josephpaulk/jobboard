@@ -66,12 +66,10 @@ function findByLogin(email, password) {
         })
         .then(formatForAPI)
         .then((user) => {
-          console.log('> user = ', user);
           userObj = user;
           return createAccessTokenForUser(user);
         })
         .then((access_token) => {
-          console.log('> access_token = ', access_token);
           // Add 'access_token' as a property to the returned user object
           userObj.access_token = access_token.access_token;
           return userObj;
@@ -82,13 +80,13 @@ function findByLogin(email, password) {
 /**
  * Find user with access_token
  */
-function findByToken(token) {
-  return validator.params({ token }, {
-      'token': Joi.string().token().required()
+function findByToken(access_token) {
+  return validator.params({ access_token }, {
+      'access_token': Joi.string().token().required()
     }).then(function () {
       return knex('user_auth_tokens')
         .first()
-        .where({ token })
+        .where({ access_token })
         .then((access_token) => findById(access_token.user_id));
     });
 };

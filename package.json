@@ -17,6 +17,7 @@
   "dependencies": {
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
+    "cookies-js": "^1.2.2",
     "ejs": "^2.3.4",
     "express": "^4.13.3",
     "joi": "^8.0.5",
