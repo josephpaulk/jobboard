@@ -18,6 +18,8 @@ function _formatForApi(results) {
 
 /**
  * List all active jobs
+ *
+ * @return Promise
  */
 function allActive() {
   let now = new Date();
@@ -31,6 +33,9 @@ function allActive() {
 
 /**
  * Find job by id
+ *
+ * @param {Number} id
+ * @return Promise
  */
 function findById(id) {
   return validator.params({ id }, {
@@ -47,7 +52,7 @@ function findById(id) {
  * List all jobs for given user
  *
  * @param {Number} user_id
- * @return Array
+ * @return Promise
  */
 function findByUserId(user_id) {
   let now = new Date();
@@ -64,9 +69,12 @@ function findByUserId(user_id) {
 
 /**
  * Create new job listing
+ *
+ * @return Promise
  */
 function create(params) {
   return validator.params(params, {
+      'user_id': Joi.number().required(),
       'title': Joi.string().max(60).required(),
       'location': Joi.string().max(60).required(),
       'description': Joi.string().required(),
@@ -86,6 +94,7 @@ function create(params) {
       let admin_key = crypto.createHash('sha1').update(now.toString() + Math.random()).digest('hex');
 
       let storedJob = {
+        user_id: params.user_id,
         title: params.title,
         location: params.location,
         description: params.description,
@@ -106,7 +115,7 @@ function create(params) {
 
       return knex(TABLE_NAME)
         .insert(storedJob)
-        .returning('id') // Postgres only!
+        .returning('id')
         .then(function (id) {
           // Return job object with insert id
           return Promise.resolve(Object.assign({ id: id[0] }, storedJob));

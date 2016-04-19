@@ -12,7 +12,6 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const express = require('express');
 const bodyParser = require('body-parser');
-const passport = require('passport');
 
 const routes = require('shared/routes');
 const sdk = require('server/sdk');
@@ -47,6 +46,46 @@ app.use(bodyParser.urlencoded({ extended: false }));
 let cookieParser = require('cookie-parser');
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
+/**
+ * User authentication if access_token is provided
+ *
+ * Set 'req.user' as user object if we have an access_token
+ */
+app.use(function (req, res, next) {
+  let access_token;
+
+  // Cookie auth
+  if (req.cookies.user) {
+    let userCookieValue = JSON.parse(req.cookies.user);
+    if (userCookieValue.access_token) {
+      access_token = userCookieValue.access_token;
+    }
+  }
+
+  if (access_token) {
+    sdk.users()
+      .findByToken(access_token)
+      .then((user) => {
+        req.user = user;
+        next();
+      })
+      .catch(next);
+  } else {
+    next();
+  }
+});
+
+function userAuthRequired(req, res, next) {
+  if (req.user && req.user.id) {
+    next();
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+}
+
+// Passthru auth & calls next() to load 'req.user' as found user object
+app.get('/users/dashboard', userAuthRequired);
+
 // Post new job
 app.post('/api/jobs', function (req, res) {
   sdk.jobs()
@@ -55,29 +94,6 @@ app.post('/api/jobs', function (req, res) {
       res.json({ job });
     })
     .catch(sdk.respondWithError(req, res));
-});
-
-/**
- * User login/registration, etc.
- */
-// Configure Passport for user authentication
-app.use(passport.initialize());
-passport.use(sdk.users().passportTokenStrategy());
-passport.use(sdk.users().passportLoginStrategy());
-
-/**
- * Set 'access_token' in request body for Passport.js to pick up if browser
- * cookie is set (Passport.js doesn't read cookies by default)
- */
-app.use(function (req, res, next) {
-  if (req.cookies.user) {
-    let userCookieValue = JSON.parse(req.cookies.user);
-    if (userCookieValue.access_token) {
-      req.body.access_token = userCookieValue.access_token;
-    }
-  }
-
-  next();
 });
 
 app.post('/api/users/login', function(req, res) {
@@ -98,12 +114,16 @@ app.post('/api/users/register', function (req, res) {
     .catch(sdk.respondWithError(req, res));
 });
 
-app.get('/users/dashboard',
-  passport.authenticate('bearer', { session: false }),
-  function(req, res) {
-    res.json({ user: req.user });
-  }
-);
+function renderComponentWithLayout(res, renderFunc, component, props = {}, layout = 'layout') {
+  let jsxToRender = React.createElement(App, { children: renderFunc() });
+  res.render(component.layout || layout, {
+    content: ReactDOMServer.renderToString(jsxToRender),
+    title: component.title,
+    js: component.js || [],
+    css: component.css || [],
+    react_props: JSON.stringify(props)
+  });
+}
 
 // Match shared routes rendered by React components
 app.get('*', function(req, res) {
@@ -112,7 +132,8 @@ app.get('*', function(req, res) {
     // Add query string data to serverProps for fetchData
     let serverProps = Object.assign({}, match.props, {
       url: match.urlParts.path,
-      queryString: match.urlParts.queryKey
+      queryString: match.urlParts.queryKey,
+      user: req.user || false
     });
 
     // Fetch data server side
@@ -120,18 +141,11 @@ app.get('*', function(req, res) {
       .then(function (data) {
         let props = {
           data,
-          qs: match.urlParts.queryKey
+          qs: match.urlParts.queryKey,
+          user: req.user || false
         };
         let component = match.component;
-        let layout = component.layout || 'layout';
-        let jsxToRender = React.createElement(App, { children: match.factory(props) });
-        res.render(layout, {
-          content: ReactDOMServer.renderToString(jsxToRender),
-          title: component.title,
-          js: component.js || [],
-          css: component.css || [],
-          react_props: JSON.stringify(props)
-        });
+        renderComponentWithLayout(res, () => match.factory(props), component, props);
       }).catch(function (err) {
         // @TODO: Create error template to show errors in
         if (isDevEnv) {

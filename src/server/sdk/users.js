@@ -3,8 +3,6 @@
 // NPM
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const BearerStrategy = require('passport-http-bearer').Strategy;
-const LocalStrategy = require('passport-local').Strategy;
 
 // Local
 const DAYS_TO_EXPIRE = parseInt(process.env.USER_TOKEN_DAYS_TO_EXPIRE) || 30;
@@ -146,47 +144,4 @@ function register(fields) {
     });
 };
 
-
-/**
- * Passport login strategy for authenticating with API token
- */
-function passportTokenStrategy() {
-  return new BearerStrategy(function(token, cb) {
-    findByToken(token)
-      .then(function(user) {
-        if (!user) {
-          cb(null, false);
-        } else {
-          cb(null, user);
-        }
-      }).catch(function(err) {
-        cb(err);
-      });
-  });
-};
-
-
-/**
- * Passport login strategy for authenticating with email/password
- */
-function passportLoginStrategy() {
-  return new LocalStrategy({
-      usernameField: 'email',
-      passwordField: 'passwd',
-    },
-    function(email, password, cb) {
-      findByLogin(email, password)
-        .then(function(user) {
-          if (!user) {
-            cb(null, false);
-          } else {
-            cb(null, user);
-          }
-        }).catch(function(err) {
-          cb(err);
-        });
-    }
-  );
-};
-
-module.exports = { findById, findByLogin, findByToken, register, passportTokenStrategy, passportLoginStrategy };
+module.exports = { findById, findByLogin, findByToken, register };
