@@ -13,7 +13,7 @@ const Joi = validator.Joi;
  */
 function _formatForApi(results) {
   // @TODO: Any formatting
-  results;
+  return results;
 }
 
 /**

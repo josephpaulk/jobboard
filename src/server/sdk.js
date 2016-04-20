@@ -54,6 +54,12 @@ function respondWithError(req, res) {
       errorJson.http_status = 404;
     }
 
+    // 401 error
+    if (err instanceof errors.NotAuthorized) {
+      errorJson.error_type = 'authorization';
+      errorJson.http_status = 401;
+    }
+
     // DEVELOPMENT mode gets the full stack trace
     if (process.env.NODE_ENV === 'development') {
       errorJson.stack = err.stack.split("\n");

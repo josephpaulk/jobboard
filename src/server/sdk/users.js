@@ -52,12 +52,12 @@ function findByLogin(email, password) {
         .then((user) => {
           // No user found by email address
           if (!user) {
-            throw new errors.NotFound("No user registered with provided email address");
+            throw new errors.NotAuthorized("No user registered with provided email address");
           }
 
           // Incorrect password
           if (!bcrypt.compareSync(password, user.password)) {
-            throw new errors.NotFound("Incorrect user login. Please try again.");
+            throw new errors.NotAuthorized("Incorrect user login. Please try again.");
           }
 
           return user;
@@ -85,7 +85,13 @@ function findByToken(access_token) {
       return knex('user_auth_tokens')
         .first()
         .where({ access_token })
-        .then((access_token) => findById(access_token.user_id));
+        .then((access_token) => {
+          if (!access_token) {
+            throw new errors.NotAuthorized('Invalid or expired user access_token');
+          }
+
+          return findById(access_token.user_id);
+        });
     });
 };
 

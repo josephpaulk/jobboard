@@ -25,6 +25,15 @@ class NotFound extends ExtendableError {
 }
 
 /**
+ * NotAuthorized (Produces 401 error)
+ */
+class NotAuthorized extends ExtendableError {
+  constructor(msg) {
+    super(msg);
+  }
+}
+
+/**
  * ValidationError (Produces 400 error)
  */
 class ValidationError extends ExtendableError {
@@ -58,4 +67,4 @@ function throwNotFoundIfNoResults(msg) {
   };
 }
 
-module.exports = { NotFound, ValidationError, throwNotFoundIfNoResults };
+module.exports = { NotFound, NotAuthorized, ValidationError, throwNotFoundIfNoResults };

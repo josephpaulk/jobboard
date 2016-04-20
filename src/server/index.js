@@ -51,7 +51,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
  *
  * Set 'req.user' as user object if we have an access_token
  */
-app.use(function (req, res, next) {
+function userAuthRequired(req, res, next) {
   let access_token;
 
   // Cookie auth
@@ -69,17 +69,9 @@ app.use(function (req, res, next) {
         req.user = user;
         next();
       })
-      .catch(next);
+      .catch(sdk.respondWithError(req, res));
   } else {
-    next();
-  }
-});
-
-function userAuthRequired(req, res, next) {
-  if (req.user && req.user.id) {
-    next();
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
+    throw new errors.NotAuthorized("User login required");
   }
 }
 
@@ -87,9 +79,10 @@ function userAuthRequired(req, res, next) {
 app.get('/users/dashboard', userAuthRequired);
 
 // Post new job
-app.post('/api/jobs', function (req, res) {
+app.post('/api/jobs', userAuthRequired, function (req, res) {
+  let params = Object.assign({}, req.body, { user_id: req.user.id });
   sdk.jobs()
-    .create(req.body)
+    .create(params)
     .then(function(job) {
       res.json({ job });
     })
