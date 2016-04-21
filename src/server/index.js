@@ -14,6 +14,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const routes = require('shared/routes');
+const errors = require('shared/errors');
 const sdk = require('server/sdk');
 
 // React components
@@ -51,35 +52,43 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
  *
  * Set 'req.user' as user object if we have an access_token
  */
-function userAuthRequired(req, res, next) {
-  let access_token;
+function userAuthRequired(options = {}) {
+  return function (req, res, next) {
+    let access_token;
 
-  // Cookie auth
-  if (req.cookies.user) {
-    let userCookieValue = JSON.parse(req.cookies.user);
-    if (userCookieValue.access_token) {
-      access_token = userCookieValue.access_token;
+    // Cookie auth
+    if (req.cookies.user) {
+      let userCookieValue = JSON.parse(req.cookies.user);
+      if (userCookieValue.access_token) {
+        access_token = userCookieValue.access_token;
+      }
     }
-  }
 
-  if (access_token) {
-    sdk.users()
-      .findByToken(access_token)
-      .then((user) => {
-        req.user = user;
-        next();
-      })
-      .catch(sdk.respondWithError(req, res));
-  } else {
-    throw new errors.NotAuthorized("User login required");
-  }
+    if (access_token) {
+      sdk.users()
+        .findByToken(access_token)
+        .then((user) => {
+          req.user = user;
+          next();
+        })
+        .catch(sdk.respondWithError(req, res));
+    } else {
+      if (options.redirectUrl) {
+        res.redirect(options.redirectUrl);
+      } else {
+        let err = new errors.NotAuthorized("User login required");
+        sdk.respondWithError(req, res)(err);
+      }
+    }
+  };
 }
 
-// Passthru auth & calls next() to load 'req.user' as found user object
-app.get('/users/dashboard', userAuthRequired);
+// Enforce user auth, but don't render - shared/routes will do it in wildcard
+// route below
+app.get('/users/dashboard', userAuthRequired({ redirectUrl: '/login' }));
 
 // Post new job
-app.post('/api/jobs', userAuthRequired, function (req, res) {
+app.post('/api/jobs', userAuthRequired(), function (req, res) {
   let params = Object.assign({}, req.body, { user_id: req.user.id });
   sdk.jobs()
     .create(params)

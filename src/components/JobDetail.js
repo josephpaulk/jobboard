@@ -15,7 +15,7 @@ const JobDetail = React.createClass({
 
   render() {
     let job = this.props.data || {};
-    let job_date = new Date(job.dt_created);
+    let job_date = job.dt_created ? new Date(job.dt_created) : new Date();
     let job_company_image = job.company_logo_url ? <a href={job.company_url}><img src={job.company_logo_url} alt={job.company_name} /></a> : '';
     let job_category = config.jobs.categories[job.category];
     let job_telecommute = config.jobs.telecommute[job.telecommute];
