@@ -97,8 +97,6 @@ body {
 }
 
 .job-detail .job-meta-info {
-  width: 35%;
-  float: right;
   font-size: 85%;
 }
 .job-detail .job-meta-info li {

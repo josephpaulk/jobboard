@@ -21,17 +21,17 @@ const JobDetail = React.createClass({
     let job_telecommute = config.jobs.telecommute[job.telecommute];
 
     return (
-      <div className="row job-detail">
-        <div className="col-md-9">
-          <header>
-            <h1>{ job.title }</h1>
-            <div className="job-date">Posted { dateFormat(job_date, "mmm dd") }</div>
-          </header>
-          <section>
-            <div className="job-company">{ job.company_name } <mark>in { job.location }</mark></div>
-          </section>
-          <div className="panel panel-default">
-            <div className="panel-body">
+      <div className="job-detail">
+        <header>
+          <h1>{ job.title }</h1>
+          <div className="job-date">Posted { dateFormat(job_date, "mmm dd") }</div>
+        </header>
+        <section>
+          <div className="job-company">{ job.company_name } <mark>in { job.location }</mark></div>
+        </section>
+        <div className="panel panel-default">
+          <div className="panel-body">
+            <div className="pull-right">
               <table className="table job-meta-info">
                 <tbody>
                   <tr>
@@ -44,15 +44,17 @@ const JobDetail = React.createClass({
                   </tr>
                 </tbody>
               </table>
-
-              <div className="job-description" dangerouslySetInnerHTML={{__html: marked(job.description || '')}} />
+              <div className="thumbnail text-center">
+                { job_company_image }
+                <div className="caption">
+                  <h3><a className="job-company-link" href={job.company_url}>{ job.company_name }</a></h3>
+                  <a className="btn btn-primary btn-lg" href={ job.apply_url }>Apply For This Job</a>
+                </div>
+              </div>
             </div>
+
+            <div className="job-description" dangerouslySetInnerHTML={{__html: marked(job.description || '')}} />
           </div>
-        </div>
-        <div className="col-md-3 job-company-info">
-          { job_company_image }
-          <p><a className="job-company-link" href={job.company_url}>{ job.company_name }</a></p>
-          <a className="btn btn-primary btn-lg" href={ job.apply_url }>Apply For This Job</a>
         </div>
       </div>
     );
