@@ -2,7 +2,6 @@
 
 const TABLE_NAME = 'jobs';
 const DAYS_TO_EXPIRE = parseInt(process.env.JOBS_DAYS_TO_EXPIRE) || 30;
-const crypto = require('crypto');
 const knex = require('server/db');
 const config = require('shared/config');
 const validator = require('server/validator');
@@ -90,9 +89,6 @@ function create(params) {
       let dt_expires = new Date();
       dt_expires.setDate(dt_expires.getDate() + DAYS_TO_EXPIRE);
 
-      // Generate admin key so we can store it in session for editing and payment association
-      let admin_key = crypto.createHash('sha1').update(now.toString() + Math.random()).digest('hex');
-
       let storedJob = {
         user_id: params.user_id,
         title: params.title,
@@ -107,7 +103,6 @@ function create(params) {
         company_email: params.company_email,
         is_live: false,
         is_featured: false,
-        admin_key: admin_key,
         dt_created: now,
         dt_updated: now,
         dt_expires

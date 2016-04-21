@@ -41,10 +41,49 @@ body {
 }
 
 /**
+ * Job listings page
+ */
+.job-list h1 {
+  margin-bottom: 1em;
+}
+.job-list .panel {
+  font-size: 1.2em;
+}
+.job-list .label {
+  margin-left: 1em;
+  font-size: 1em;
+}
+.job-list .job-company {
+  font-weight: bold;
+  margin-right: 1em;
+}
+
+/**
  * Job detial page
  */
 .job-detail {
   font-size: 120%;
+}
+.job-detail header,
+.job-detail section {
+  margin-bottom: 1em;
+}
+.job-detail h1 {
+  color: #333;
+  margin-bottom: 0;
+}
+.job-detail mark {
+  background-color: lightyellow;
+}
+.job-detail .job-date {
+  color: #777;
+}
+.job-detail .job-company {
+  font-size: 1em;
+}
+.job-detail .panel-default,
+.job-list .panel-default {
+  border-top-width: 1px;
 }
 .job-detail .job-company-info {
   text-align: center;

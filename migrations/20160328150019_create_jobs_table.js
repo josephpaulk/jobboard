@@ -15,7 +15,6 @@ exports.up = function(knex, Promise) {
     t.string('company_email').notNull();
     t.boolean('is_live').notNull().index();
     t.boolean('is_featured').notNull();
-    t.string('admin_key').notNull().index();
     t.dateTime('dt_created').notNull();
     t.dateTime('dt_updated').nullable();
     t.dateTime('dt_expires').notNull().index();

@@ -42,4 +42,4 @@ function isNode() {
   return (typeof module !== 'undefined' && this.module !== module);
 }
 
-module.exports = { parseUri, isNode };
+module.exports = { parseUri, isNode, dateFormat };

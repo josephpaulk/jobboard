@@ -15,15 +15,15 @@ const JobList = React.createClass({
     let jobs = this.props.data || [];
 
     return (
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          <h3 className="panel-title">Current Jobs</h3>
-        </div>
-        <div className="list-group">
-          { jobs.length === 0 ? this._renderNoJobs() : undefined}
-          { jobs.map(function (job) {
-            return <JobListingRow job={job} />;
-          })}
+      <div className="job-list">
+        <h1>Oklahoma Tech Jobs</h1>
+        <div className="panel panel-default">
+          <div className="list-group">
+            { jobs.length === 0 ? this._renderNoJobs() : undefined}
+            { jobs.map(function (job) {
+              return <JobListingRow job={job} key={'job_' + job.id} />;
+            })}
+          </div>
         </div>
       </div>
     );
