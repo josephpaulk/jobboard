@@ -45,33 +45,60 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Cookies
 let cookieParser = require('cookie-parser');
-app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cookieParser(process.env.COOKIE_SECRET, {
+  path: '/',
+  httpOnly: true
+}));
 
 /**
  * User authentication if access_token is provided
  *
  * Set 'req.user' as user object if we have an access_token
+ * Set 'res.locals.user' as user object for ejs templates to use
+ */
+app.use(function (req, res, next) {
+  let access_token;
+  res.locals.user = false;
+
+  // Cookie auth
+  if (req.cookies.user) {
+    let userCookieValue = JSON.parse(req.cookies.user);
+    if (userCookieValue.access_token) {
+      access_token = userCookieValue.access_token;
+    }
+  }
+
+  // Query string
+  if (!access_token && req.query.access_token) {
+    access_token = req.query.access_token;
+  }
+
+  // JSON or urlenoded request body
+  if (!access_token && req.body.access_token) {
+    access_token = req.body.access_token;
+  }
+
+  // Found access_token - load user account
+  if (access_token) {
+    sdk.users()
+      .findByToken(access_token)
+      .then((user) => {
+        req.user = res.locals.user = user;
+        next();
+      })
+      .catch(sdk.respondWithError(req, res));
+  } else {
+    next();
+  }
+});
+
+/**
+ * Force user auth - redirect or throw 401 Unauthorized error
  */
 function userAuthRequired(options = {}) {
   return function (req, res, next) {
-    let access_token;
-
-    // Cookie auth
-    if (req.cookies.user) {
-      let userCookieValue = JSON.parse(req.cookies.user);
-      if (userCookieValue.access_token) {
-        access_token = userCookieValue.access_token;
-      }
-    }
-
-    if (access_token) {
-      sdk.users()
-        .findByToken(access_token)
-        .then((user) => {
-          req.user = user;
-          next();
-        })
-        .catch(sdk.respondWithError(req, res));
+    if (req.user) {
+      next();
     } else {
       if (options.redirectUrl) {
         res.redirect(options.redirectUrl);
@@ -83,8 +110,13 @@ function userAuthRequired(options = {}) {
   };
 }
 
-// Enforce user auth, but don't render - shared/routes will do it in wildcard
-// route below
+app.get('/logout', function (req, res) {
+  res.clearCookie('user');
+  res.redirect('/');
+});
+
+// Enforce user auth only - shared/routes will render in wildcard route below
+app.get('/jobs/create', userAuthRequired({ redirectUrl: '/login' }));
 app.get('/users/dashboard', userAuthRequired({ redirectUrl: '/login' }));
 
 // Post new job

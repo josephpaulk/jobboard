@@ -19,8 +19,13 @@
         <a href="/" target="_top" class="navbar-brand">Techlahoma Jobs</a>
       </div>
       <ul class="nav navbar-nav pull-right">
+      <% if (user) { %>
+        <li><a href="/users/dashboard">User Dashboard</a></li>
+        <li><a href="/logout">Logout</a></li>
+      <% } else { %>
         <li><a href="/login">Login</a></li>
         <li><a href="/register">Register</a></li>
+      <% } %>
         <li><a href="/jobs/create" class="btn btn-primary navbar-btn">Post a Job</a></li>
       </ul>
     </div>
