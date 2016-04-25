@@ -2,7 +2,7 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('jobs', function(t) {
     t.increments('id').primary();
-    t.integer('user_id').notNull().index();
+    t.integer('user_id').notNull().index().references('id').inTable('users');
     t.string('title').notNull();
     t.string('location').notNull();
     t.text('description').notNull();
