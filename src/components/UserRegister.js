@@ -14,7 +14,11 @@ const UserRegister = React.createClass({
       data: {
         name: null,
         email: null,
-        password: null
+        password: null,
+        company_name: null,
+        company_url: null,
+        company_logo_url: null,
+        company_email: null
       },
       error_message: null,
       field_errors: {}
@@ -75,12 +79,52 @@ const UserRegister = React.createClass({
               <input type="password" className="form-control" id="password" name="password" placeholder="Password" />
             </div>
           </div>
-          <div className="form-group">
-            <div className="col-lg-10 col-lg-offset-2">
-               <button type="submit" className="btn btn-primary btn-lg">Register</button>
-            </div>
-          </div>
         </fieldset>
+
+          <fieldset>
+            <legend>About the Company</legend>
+            <p>These fields are optional, but can help you create job ads
+            faster because they will be pre-populated on each job listing form
+            if filled in.</p>
+            <div className={"form-group" + getErrorClass('company_name')}>
+              {showErrorMessage('company_name')}
+              <label htmlFor="company_name" className="col-lg-2 control-label">Company Name</label>
+              <div className="col-lg-10">
+                <input type="text" className="form-control" id="company_name" name="company_name" />
+                <span className="help-block">Your company or organization's name</span>
+              </div>
+            </div>
+            <div className={"form-group" + getErrorClass('company_logo_url')}>
+              {showErrorMessage('company_logo_url')}
+              <label htmlFor="company_logo_url" className="col-lg-2 control-label">Company Logo URL</label>
+              <div className="col-lg-10">
+                <input type="text" className="form-control" id="company_logo_url" name="company_logo_url" />
+                <span className="help-block">Optional &mdash; URL to your company logo - will be displayed with 200px width.</span>
+              </div>
+            </div>
+            <div className={"form-group" + getErrorClass('company_url')}>
+              {showErrorMessage('company_url')}
+              <label htmlFor="company_url" className="col-lg-2 control-label">Company Website URL</label>
+              <div className="col-lg-10">
+                <input type="text" className="form-control" id="company_url" name="company_url" />
+                <span className="help-block">http://example.com</span>
+              </div>
+            </div>
+            <div className={"form-group" + getErrorClass('company_email')}>
+              {showErrorMessage('company_email')}
+              <label htmlFor="company_email" className="col-lg-2 control-label">Company Email</label>
+              <div className="col-lg-10">
+                <input type="text" className="form-control" id="company_email" name="company_email" />
+                <span className="help-block">Where we'll send your reciept and confirmation email</span>
+              </div>
+            </div>
+          </fieldset>
+
+        <div className="form-group">
+          <div className="col-lg-10 col-lg-offset-2">
+             <button type="submit" className="btn btn-primary btn-lg">Register</button>
+          </div>
+        </div>
       </form>
     );
   }

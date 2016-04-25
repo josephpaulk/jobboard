@@ -1,5 +1,16 @@
 'use strict';
 
+/**
+ * Determine if user can edit job
+ *
+ * @param {User} user
+ * @param {Job} job
+ * @return boolean
+ */
+function userCanEditJob(user, job) {
+  return user.is_admin || user.id === job.user_id;
+}
+
 // parseUri 1.2.2
 // (c) Steven Levithan <stevenlevithan.com>
 // MIT License
@@ -42,4 +53,4 @@ function isNode() {
   return (typeof module !== 'undefined' && this.module !== module);
 }
 
-module.exports = { parseUri, isNode, dateFormat };
+module.exports = { userCanEditJob, parseUri, isNode };

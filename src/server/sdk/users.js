@@ -14,7 +14,7 @@ const Joi = validator.Joi;
 /**
  * Format user row to PUBLIC-FACING user object (returned in API responses)
  */
-function formatForAPI(row) {
+function _formatForAPI(row) {
   if (!row) { return false; }
 
   delete row.password;
@@ -32,7 +32,7 @@ function findById(id) {
       return knex('users')
         .first()
         .where({ id })
-        .then(formatForAPI);
+        .then(_formatForAPI);
     });
 };
 
@@ -62,7 +62,7 @@ function findByLogin(email, password) {
 
           return user;
         })
-        .then(formatForAPI)
+        .then(_formatForAPI)
         .then((user) => {
           userObj = user;
           return createAccessTokenForUser(user);
@@ -128,13 +128,22 @@ function register(fields) {
   return validator.params(fields, {
       'name': Joi.string().required(),
       'email': Joi.string().email().required(),
-      'password': Joi.string().required()
-    }).then(function () {
-      let { name, email, password } = fields;
+      'password': Joi.string().required(),
+      'company_name': Joi.string(),
+      'company_url': Joi.string().uri().lowercase(),
+      'company_logo_url': Joi.string().uri().lowercase().trim().allow(['', null]),
+      'company_email': Joi.string().email().lowercase()
+    }).then(function (fields) {
+      let { name, email, password, company_name, company_url, company_logo_url, company_email } = fields;
       let storedUser = {
         name,
         email,
         password: bcrypt.hashSync(password, 10),
+        company_name,
+        company_url,
+        company_logo_url,
+        company_email,
+        is_active: true,
         is_admin: false,
         dt_created: new Date()
       };
@@ -146,7 +155,7 @@ function register(fields) {
           // Return job object with insert id
           return Object.assign({ id: id[0] }, storedUser);
         })
-        .then(formatForAPI);
+        .then(_formatForAPI);
     });
 };
 

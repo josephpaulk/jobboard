@@ -13,7 +13,7 @@ const JobCreate = React.createClass({
 
   getInitialState() {
     return {
-      job: {}
+      job: this.props.job || {}
     };
   },
 
@@ -27,7 +27,7 @@ const JobCreate = React.createClass({
     return (
       <div className="row">
         <div className="col-md-5">
-          <JobForm onChange={this.onFormChange} />
+          <JobForm onChange={this.onFormChange} job={job} />
         </div>
         <div className="col-md-7">
           <JobDetail data={job} />

@@ -123,6 +123,13 @@ body {
 }
 
 /**
+ * Job admin controls
+ */
+.job-admin-controls {
+  font-size: 0.8em;
+}
+
+/**
  * Bootstrap overrides
  */
 .navbar-default .navbar-nav>li>a.navbar-btn {

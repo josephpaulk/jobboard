@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 const routes = require('shared/routes');
 const errors = require('shared/errors');
 const sdk = require('server/sdk');
+const auth = require('lib/auth');
 
 // React components
 const App = require('components/App');
@@ -56,59 +57,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET, {
  * Set 'req.user' as user object if we have an access_token
  * Set 'res.locals.user' as user object for ejs templates to use
  */
-app.use(function (req, res, next) {
-  let access_token;
-  res.locals.user = false;
-
-  // Cookie auth
-  if (req.cookies.user) {
-    let userCookieValue = JSON.parse(req.cookies.user);
-    if (userCookieValue.access_token) {
-      access_token = userCookieValue.access_token;
-    }
-  }
-
-  // Query string
-  if (!access_token && req.query.access_token) {
-    access_token = req.query.access_token;
-  }
-
-  // JSON or urlenoded request body
-  if (!access_token && req.body.access_token) {
-    access_token = req.body.access_token;
-  }
-
-  // Found access_token - load user account
-  if (access_token) {
-    sdk.users()
-      .findByToken(access_token)
-      .then((user) => {
-        req.user = res.locals.user = user;
-        next();
-      })
-      .catch(sdk.respondWithError(req, res));
-  } else {
-    next();
-  }
-});
-
-/**
- * Force user auth - redirect or throw 401 Unauthorized error
- */
-function userAuthRequired(options = {}) {
-  return function (req, res, next) {
-    if (req.user) {
-      next();
-    } else {
-      if (options.redirectUrl) {
-        res.redirect(options.redirectUrl);
-      } else {
-        let err = new errors.NotAuthorized("User login required");
-        sdk.respondWithError(req, res)(err);
-      }
-    }
-  };
-}
+app.use(auth.loadUserByAccessToken());
 
 app.get('/logout', function (req, res) {
   res.clearCookie('user');
@@ -116,16 +65,32 @@ app.get('/logout', function (req, res) {
 });
 
 // Enforce user auth only - shared/routes will render in wildcard route below
-app.get('/jobs/create', userAuthRequired({ redirectUrl: '/login' }));
-app.get('/users/dashboard', userAuthRequired({ redirectUrl: '/login' }));
+app.get('/jobs/create', auth.userAuthRequired({ redirectUrl: '/login' }));
+app.get('/user/dashboard', auth.userAuthRequired({ redirectUrl: '/login' }));
 
 // Post new job
-app.post('/api/jobs', userAuthRequired(), function (req, res) {
+app.post('/api/jobs', auth.userAuthRequired(), function (req, res) {
   let params = Object.assign({}, req.body, { user_id: req.user.id });
   sdk.jobs()
     .create(params)
     .then(function(job) {
-      res.json({ job });
+      res.json(job);
+    })
+    .catch(sdk.respondWithError(req, res));
+});
+app.put('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
+  sdk.jobs()
+    .update(req.params.id, req.body)
+    .then(function(job) {
+      res.json(job);
+    })
+    .catch(sdk.respondWithError(req, res));
+});
+app.del('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
+  sdk.jobs()
+    .del(req.params.id)
+    .then(function(job) {
+      res.json(job);
     })
     .catch(sdk.respondWithError(req, res));
 });
@@ -134,7 +99,7 @@ app.post('/api/users/login', function(req, res) {
   sdk.users()
     .findByLogin(req.body.email, req.body.password)
     .then((user) => {
-      res.json({ user });
+      res.json(user);
     })
     .catch(sdk.respondWithError(req, res));
 });
@@ -143,7 +108,7 @@ app.post('/api/users/register', function (req, res) {
   sdk.users()
     .register(req.body)
     .then(function(user) {
-      res.json({ user });
+      res.json(user);
     })
     .catch(sdk.respondWithError(req, res));
 });

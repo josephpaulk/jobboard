@@ -54,8 +54,6 @@ function findById(id) {
  * @return Promise
  */
 function findByUserId(user_id) {
-  let now = new Date();
-
   return validator.params({ user_id }, {
       'user_id': Joi.number().required()
     }).then(function () {
@@ -66,25 +64,28 @@ function findByUserId(user_id) {
     });
 }
 
+let job_schema = {
+  'user_id': Joi.number().required(),
+  'title': Joi.string().max(60).required(),
+  'location': Joi.string().max(60).required(),
+  'description': Joi.string().required(),
+  'category': Joi.string().required().valid(Object.keys(config.jobs.categories)), // One of pre-defined categories keys
+  'telecommute': Joi.string().required().valid(Object.keys(config.jobs.telecommute)), // One of pre-defined telecommute keys
+  'apply_url': Joi.string().uri().lowercase().required(),
+  'company_name': Joi.string().required(),
+  'company_url': Joi.string().uri().lowercase().required(),
+  'company_logo_url': Joi.string().uri().lowercase().trim().allow(['', null]),
+  'company_email': Joi.string().email().lowercase().required()
+};
+
 /**
  * Create new job listing
  *
  * @return Promise
  */
 function create(params) {
-  return validator.params(params, {
-      'user_id': Joi.number().required(),
-      'title': Joi.string().max(60).required(),
-      'location': Joi.string().max(60).required(),
-      'description': Joi.string().required(),
-      'category': Joi.string().required().valid(Object.keys(config.jobs.categories)), // One of pre-defined categories keys
-      'telecommute': Joi.string().required().valid(Object.keys(config.jobs.telecommute)), // One of pre-defined telecommute keys
-      'apply_url': Joi.string().uri().lowercase().required(),
-      'company_name': Joi.string().required(),
-      'company_url': Joi.string().uri().lowercase().required(),
-      'company_logo_url': Joi.string().uri().lowercase().trim().allow(['', null]),
-      'company_email': Joi.string().email().lowercase().required()
-    }).then(function (params) {
+  return validator.params(params, job_schema)
+    .then(function (params) {
       let now = new Date();
       let dt_expires = new Date();
       dt_expires.setDate(dt_expires.getDate() + DAYS_TO_EXPIRE);
@@ -119,4 +120,66 @@ function create(params) {
     });
 }
 
-module.exports = { allActive, findById, create };
+/**
+ * Update existing job listing
+ *
+ * @return Promise
+ */
+function update(id, params) {
+  delete job_schema.user_id;
+
+  return findById(id).then(function (job) {
+    return validator.params(params, job_schema)
+      .then(function (params) {
+        let now = new Date();
+
+        let storedJob = Object.assign({}, job, {
+          title: params.title,
+          location: params.location,
+          description: params.description,
+          category: params.category,
+          telecommute: params.telecommute,
+          apply_url: params.apply_url,
+          company_name: params.company_name,
+          company_url: params.company_url,
+          company_logo_url: params.company_logo_url || null,
+          company_email: params.company_email,
+          dt_updated: now
+        });
+
+        // Discard fields we don't want to update
+        delete storedJob.id;
+        delete storedJob.user_id;
+        delete storedJob.is_live;
+        delete storedJob.is_featured;
+        delete storedJob.dt_created;
+        delete storedJob.dt_expires;
+
+        return knex(TABLE_NAME)
+          .update(storedJob)
+          .then(function (id) {
+            return Object.assign({}, job, storedJob);
+          })
+          .then(_formatForApi);
+      });
+    });
+}
+
+/**
+ * Delete existing job listing
+ *
+ * @return Promise
+ */
+function del(id) {
+  return findById(id).then(function (job) {
+    return knex(TABLE_NAME)
+      .where({ id })
+      .del()
+      .then(function () {
+        return job;
+      })
+      .then(_formatForApi);
+  });
+}
+
+module.exports = { allActive, findById, findByUserId, create, update, del };

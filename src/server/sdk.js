@@ -58,6 +58,9 @@ function respondWithError(req, res) {
     if (err instanceof errors.NotAuthorized) {
       errorJson.error_type = 'authorization';
       errorJson.http_status = 401;
+
+      // Delete user cookie if invalid (caused 401)
+      res.clearCookie('user');
     }
 
     // DEVELOPMENT mode gets the full stack trace

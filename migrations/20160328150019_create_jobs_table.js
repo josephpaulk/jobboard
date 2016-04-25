@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
     t.integer('user_id').notNull().index();
     t.string('title').notNull();
     t.string('location').notNull();
-    t.string('description').notNull();
+    t.text('description').notNull();
     t.string('category').notNull();
     t.string('telecommute').notNull();
     t.string('apply_url').notNull();

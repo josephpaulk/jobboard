@@ -14,6 +14,7 @@ const JobDetail = React.createClass({
   },
 
   render() {
+    let user = this.props.user || false;
     let job = this.props.data || {};
     let job_date = job.dt_created ? new Date(job.dt_created) : new Date();
     let job_company_image = job.company_logo_url ? <a href={job.company_url}><img src={job.company_logo_url} alt={job.company_name} /></a> : '';
@@ -22,6 +23,7 @@ const JobDetail = React.createClass({
 
     return (
       <div className="job-detail">
+        {this._renderAdminControls(job, user)}
         <header>
           <h1>{ job.title }</h1>
           <div className="job-date">Posted { dateFormat(job_date, "mmm dd") }</div>
@@ -56,6 +58,18 @@ const JobDetail = React.createClass({
             <div className="job-description" dangerouslySetInnerHTML={{__html: marked(job.description || '')}} />
           </div>
         </div>
+      </div>
+    );
+  },
+
+  _renderAdminControls(job, user) {
+    if (job.user_id !== user.id && !user.is_admin) { return; }
+
+    return (
+      <div className="pull-right well job-admin-controls">
+        <p>Admin Controls:</p>
+        <a className="btn btn-default" href={`/jobs/${job.id}/edit`}>Edit</a> &nbsp;
+        <a className="btn btn-danger" href="#">Delete</a>
       </div>
     );
   }

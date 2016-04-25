@@ -36,7 +36,7 @@ const UserLogin = React.createClass({
         let user = data.user;
         // Set browser cookie with the result
         Cookies.set('user', JSON.stringify({ email: user.email, access_token: user.access_token }));
-        window.location = '/users/dashboard';
+        window.location = '/user/dashboard';
       })
       .catch((err) => {
         this.setState({ error_message: err.message, field_errors: err.field_errors });
