@@ -4,6 +4,8 @@ const TABLE_NAME = 'jobs';
 const DAYS_TO_EXPIRE = parseInt(process.env.JOBS_DAYS_TO_EXPIRE) || 30;
 const knex = require('server/db');
 const config = require('shared/config');
+const sharedUtils = require('shared/utils');
+const errors = require('shared/errors');
 const validator = require('server/validator');
 const Joi = validator.Joi;
 
@@ -126,10 +128,16 @@ function create(params) {
  * @return Promise
  */
 function update(id, params) {
-  delete job_schema.user_id;
+  let update_schema = Object.assign({}, job_schema);
+  delete update_schema.user_id;
 
   return findById(id).then(function (job) {
-    return validator.params(params, job_schema)
+    // Ensure user can update job
+    if (!sharedUtils.userCanEditJob(params.user_id, job)) {
+      throw new errors.Forbidden('You are not allowed to edit this job posting');
+    }
+
+    return validator.params(params, update_schema)
       .then(function (params) {
         let now = new Date();
 

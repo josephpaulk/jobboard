@@ -15,7 +15,7 @@ const JobEdit = React.createClass({
       let user = props.user;
       return sdk.jobs().findById(parseInt(props.id)).then((job) => {
         if (!sharedUtils.userCanEditJob(user, job)) {
-          throw new errors.NotAuthorized("User is not allowed to edit this job listing");
+          throw new errors.Forbidden("User is not allowed to edit this job listing");
         }
 
         return job;

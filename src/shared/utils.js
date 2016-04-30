@@ -3,11 +3,15 @@
 /**
  * Determine if user can edit job
  *
- * @param {User} user
+ * @param {User|Number} user object or user_id
  * @param {Job} job
  * @return boolean
  */
 function userCanEditJob(user, job) {
+  if (typeof user === 'number') {
+    return user === job.user_id;
+  }
+
   return user.is_admin || user.id === job.user_id;
 }
 

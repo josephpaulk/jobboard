@@ -32,8 +32,7 @@ const UserLogin = React.createClass({
 
     sdk.users()
       .findByLogin(data.email, data.password)
-      .then((data) => {
-        let user = data.user;
+      .then((user) => {
         // Set browser cookie with the result
         Cookies.set('user', JSON.stringify({ email: user.email, access_token: user.access_token }));
         window.location = '/user/dashboard';

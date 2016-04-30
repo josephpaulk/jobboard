@@ -22,6 +22,7 @@ const auth = require('lib/auth');
 const App = require('components/App');
 const JobCreate = require('components/JobCreate');
 const Error404 = require('components/Error404');
+const Error500 = require('components/Error500');
 
 let app = express();
 let isDevEnv = process.env.NODE_ENV === 'development';
@@ -64,13 +65,28 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
-// Enforce user auth only - shared/routes will render in wildcard route below
+app.get('/500', function (req, res) {
+  throw new Error("This should show an error!");
+});
+
+// Enforce user auth only - 'shared/routes.js' will render these in wildcard route below
 app.get('/jobs/create', auth.userAuthRequired({ redirectUrl: '/login' }));
 app.get('/user/dashboard', auth.userAuthRequired({ redirectUrl: '/login' }));
+
+// GET jobs
+app.get('/api/jobs', auth.userAuthRequired(), function (req, res) {
+  sdk.jobs()
+    .allActive()
+    .then(function(job) {
+      res.json(job);
+    })
+    .catch(sdk.respondWithError(req, res));
+});
 
 // Post new job
 app.post('/api/jobs', auth.userAuthRequired(), function (req, res) {
   let params = Object.assign({}, req.body, { user_id: req.user.id });
+
   sdk.jobs()
     .create(params)
     .then(function(job) {
@@ -78,16 +94,28 @@ app.post('/api/jobs', auth.userAuthRequired(), function (req, res) {
     })
     .catch(sdk.respondWithError(req, res));
 });
+
+// EDIT job
 app.put('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
+  let params = Object.assign({}, req.body, { user_id: req.user.id });
+
   sdk.jobs()
-    .update(req.params.id, req.body)
+    .update(req.params.id, params)
     .then(function(job) {
       res.json(job);
     })
     .catch(sdk.respondWithError(req, res));
 });
-app.del('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
+
+// DELETE job
+app.delete('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
   sdk.jobs()
+    .findById(req.params.id)
+    .then(job => {
+      if (!sharedUtils.userCanEditJob(req.user, job)) {
+        throw new errors.Forbidden('You are not allowed to delete this job posting');
+      }
+    })
     .del(req.params.id)
     .then(function(job) {
       res.json(job);
@@ -145,30 +173,19 @@ app.get('*', function(req, res) {
         };
         let component = match.component;
         renderComponentWithLayout(res, () => match.factory(props), component, props);
-      }).catch(function (err) {
+      }).catch(function (error) {
         // @TODO: Create error template to show errors in
         if (isDevEnv) {
-          console.log(err, err.stack.split('\n'));
+          console.log(error, error.stack.split('\n'));
         }
 
-        res.status(500).render('layout', {
-          content: err,
-          title: 'Error',
-          js: [],
-          css: [],
-          react_props: JSON.stringify({})
-        });
+        res.status(500);
+        renderComponentWithLayout(res, () => React.createElement(Error500, { error }), Error500, {});
       });
   } else {
     // Show 404 route
-    let content = ReactDOMServer.renderToString(React.createElement(Error404));
-    res.status(404).render('layout', {
-      content,
-      title: 'Not Found',
-      js: [],
-      css: [],
-      react_props: JSON.stringify({})
-    });
+    res.status(404);
+    renderComponentWithLayout(res, () => React.createElement(Error404), Error404, {});
   }
 });
 
