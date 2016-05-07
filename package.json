@@ -7,7 +7,7 @@
   "scripts": {
     "build": "NODE_PATH=./src NODE_ENV=production browserify src/client/index.js -o public/js/bundle.js -t [ babelify --presets [ es2015 react ] ]",
     "build:dev": "NODE_PATH=./src NODE_ENV=development browserify src/client/index.js -o public/js/bundle.js -t [ babelify --presets [ es2015 react ] ]",
-    "minify": "uglifyjs public/js/bundle.js --compress --mangle -o public/js/bundle.js",
+    "minify": "uglifyjs public/js/bundle.js --compress --mangle --noerr -o public/js/bundle.js",
     "start": "npm run build && npm run minify && source .env && NODE_ENV=production node --harmony_default_parameters --harmony-destructuring src/server/index.js",
     "start:dev": "npm run build:dev && source .env && nodemon --delay 2 --harmony_default_parameters --harmony-destructuring src/server/index.js",
     "watch:dev": "fsmonitor -d 'src/' '!server' npm run build:dev"
