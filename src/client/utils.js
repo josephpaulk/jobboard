@@ -1,5 +1,7 @@
-const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:1339/api/' : 'http://localhost:1339/api/';
+'use strict';
+
 const Cookies = require('cookies-js');
+const baseUrl = '/api/';
 
 /**
  * Delete null properties from object

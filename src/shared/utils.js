@@ -57,4 +57,11 @@ function isNode() {
   return (typeof module !== 'undefined' && this.module !== module);
 }
 
-module.exports = { userCanEditJob, parseUri, isNode };
+/**
+ * Is development?
+ */
+function isDev() {
+  return isNode() && process & process.env && process.env.NODE_ENV === 'development';
+}
+
+module.exports = { userCanEditJob, parseUri, isNode, isDev };
