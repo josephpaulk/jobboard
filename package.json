@@ -10,7 +10,8 @@
     "minify": "uglifyjs public/js/bundle.js --compress --mangle --noerr -o public/js/bundle.js",
     "start": "npm run build && npm run minify && NODE_ENV=production node --harmony_default_parameters --harmony-destructuring src/server/index.js",
     "start:dev": "npm run build:dev && source .env && nodemon --delay 2 --harmony_default_parameters --harmony-destructuring src/server/index.js",
-    "watch:dev": "fsmonitor -d 'src/' '!server' npm run build:dev"
+    "watch:dev": "fsmonitor -d 'src/' '!server' npm run build:dev",
+    "test": "jasmine-node spec/api"
   },
   "author": "Vance Lucas",
   "license": "",
@@ -40,7 +41,8 @@
   "devDependencies": {
     "faker": "^3.1.0",
     "frisby": "git://github.com/vlucas/frisby.git#v2",
-    "fsmonitor": "^0.2.4"
+    "fsmonitor": "^0.2.4",
+    "jasmine-node": "^1.14.5"
   },
   "browser": {
     "server/sdk": "./src/client/sdk"

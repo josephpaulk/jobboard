@@ -20,6 +20,12 @@ function loadUserByAccessToken() {
       }
     }
 
+    // Header auth
+    let authHeader = req.get('Authorization');
+    if (authHeader && authHeader.indexOf('Bearer ') === 0) {
+      access_token = authHeader.replace('Bearer ', '');
+    }
+
     // Query string
     if (!access_token && req.query.access_token) {
       access_token = req.query.access_token;
