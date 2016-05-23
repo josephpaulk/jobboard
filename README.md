@@ -2,6 +2,12 @@
 
 Node.js job board used to power Techlahoma Jobs
 
+## Email List
+
+We have an email list just for folks who are waiting for the job board to go live.
+
+[Sign up for the email list here.](http://techlahoma.us9.list-manage.com/subscribe?u=523ad83c59be7a4ae257beed1&id=6ecab16e86)
+
 ## Installation
 
 Use Git to clone this app, then:
