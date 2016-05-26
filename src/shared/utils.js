@@ -1,18 +1,20 @@
 'use strict';
 
 /**
- * Determine if user can edit job
+ * Is this code running in a Node.js environment?
+ * @link http://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
  *
- * @param {User|Number} user object or user_id
- * @param {Job} job
  * @return boolean
  */
-function userCanEditJob(user, job) {
-  if (typeof user === 'number') {
-    return user === job.user_id;
-  }
+function isNode() {
+  return (typeof module !== 'undefined' && this.module !== module);
+}
 
-  return user.is_admin || user.id === job.user_id;
+/**
+ * Is development?
+ */
+function isDev() {
+  return isNode() && process & process.env && process.env.NODE_ENV === 'development';
 }
 
 // parseUri 1.2.2
@@ -48,20 +50,42 @@ parseUri.options = {
 };
 
 /**
- * Is this code running in a Node.js environment?
- * @link http://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
+ * Promise.all that accepts object as paramater i.e. {key1: Promise1, key2: Promise2}
  *
- * @return boolean
+ * @return mixed - resolved promises mapped back to provided keys
  */
-function isNode() {
-  return (typeof module !== 'undefined' && this.module !== module);
+function promiseAll(obj) {
+  if (Array.isArray(obj)) {
+    return Promise.all(obj);
+  }
+
+  let keys = Object.keys(obj);
+  let promises = keys.map(function (key) {
+    return obj[key];
+  });
+
+  return Promise.all(promises)
+    .then(function (results) {
+      return keys.reduce(function (val, key, i) {
+        val[key] = results[i];
+        return val;
+      }, {});
+    });
 }
 
 /**
- * Is development?
+ * Determine if user can edit job
+ *
+ * @param {User|Number} user object or user_id
+ * @param {Job} job
+ * @return boolean
  */
-function isDev() {
-  return isNode() && process & process.env && process.env.NODE_ENV === 'development';
+function userCanEditJob(user, job) {
+  if (typeof user === 'number') {
+    return user === job.user_id;
+  }
+
+  return user.is_admin || user.id === job.user_id;
 }
 
-module.exports = { userCanEditJob, parseUri, isNode, isDev };
+module.exports = { isNode, isDev, parseUri, promiseAll, userCanEditJob };

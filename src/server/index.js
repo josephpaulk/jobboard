@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 
 const routes = require('shared/routes');
 const errors = require('shared/errors');
+const sharedUtils = require('shared/utils');
 const sdk = require('server/sdk');
 const auth = require('lib/auth');
 
@@ -107,6 +108,18 @@ app.put('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
     .catch(sdk.respondWithError(req, res));
 });
 
+// APPROVE job (admins only)
+app.post('/api/jobs/:id/approve', auth.userAuthRequired({ is_admin: true }), function (req, res) {
+  let params = Object.assign({}, req.body, { user_id: req.user.id });
+
+  sdk.jobs()
+    .approve(req.params.id)
+    .then(function(job) {
+      res.json(job);
+    })
+    .catch(sdk.respondWithError(req, res));
+});
+
 // DELETE job
 app.delete('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
   sdk.jobs()
@@ -115,10 +128,12 @@ app.delete('/api/jobs/:id', auth.userAuthRequired(), function (req, res) {
       if (!sharedUtils.userCanEditJob(req.user, job)) {
         throw new errors.Forbidden('You are not allowed to delete this job posting');
       }
-    })
-    .del(req.params.id)
-    .then(function(job) {
-      res.json(job);
+
+      return sdk.jobs()
+        .del(req.params.id)
+        .then(function(job) {
+          res.json(job);
+        });
     })
     .catch(sdk.respondWithError(req, res));
 });

@@ -33,6 +33,21 @@ function allActive() {
 }
 
 /**
+ * List all inactive jobs (typically used for admin users reviewing jobs
+ * awaiting approval)
+ *
+ * @return Promise
+ */
+function allInactive() {
+  let now = new Date();
+
+  return knex(TABLE_NAME)
+    .where('is_live', false)
+    .orderBy('dt_created', 'desc')
+    .then(_formatForApi);
+}
+
+/**
  * Find job by id
  *
  * @param {Number} id
@@ -165,12 +180,39 @@ function update(id, params) {
 
         return knex(TABLE_NAME)
           .update(storedJob)
+          .where({ id })
           .then(function (id) {
             return Object.assign({}, job, storedJob);
           })
           .then(_formatForApi);
       });
     });
+}
+
+/**
+ * Approve existing job listing
+ *
+ * @return Promise
+ */
+function approve(id, params) {
+  return findById(id).then(function (job) {
+    // Set posting exirpation date from date of approval
+    let dt_expires = new Date();
+    dt_expires.setDate(dt_expires.getDate() + DAYS_TO_EXPIRE);
+
+    let updateData = {
+      is_live: true,
+      dt_expires
+    };
+
+    return knex(TABLE_NAME)
+      .update(updateData)
+      .where({ id })
+      .then(function (id) {
+        return Object.assign({}, job, updateData);
+      })
+      .then(_formatForApi);
+  });
 }
 
 /**
@@ -190,4 +232,4 @@ function del(id) {
   });
 }
 
-module.exports = { allActive, findById, findByUserId, create, update, del };
+module.exports = { allActive, allInactive, approve, findById, findByUserId, create, update, del };

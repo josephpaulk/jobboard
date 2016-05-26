@@ -6,6 +6,12 @@ function noop() {
   return Promise.resolve();
 }
 
+function approve(id) {
+  return utils.fetchApi('jobs/' + id + '/approve', {
+    method: 'POST'
+  });
+}
+
 function create(data) {
   return utils.fetchApi('jobs', {
     method: 'POST',
@@ -29,6 +35,7 @@ function del(id) {
 // Many of these are not setup right now, but they will call the API eventually...
 module.exports = {
   allActive: noop,
+  approve,
   findById: noop,
   findByUserId: noop,
   create,

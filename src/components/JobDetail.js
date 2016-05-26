@@ -13,6 +13,28 @@ const JobDetail = React.createClass({
     }
   },
 
+  handleApproveClick(e) {
+    let job = this.props.data || {};
+
+    sdk.jobs().approve(job.id).then(result => {
+      location.href = '/user/dashboard';
+    }).catch(err => {
+      // @TODO: Make this better...
+      alert('Job could not be approved: ' + err.message);
+    });
+  },
+
+  handleDeleteClick(e) {
+    let job = this.props.data || {};
+
+    sdk.jobs().del(job.id).then(result => {
+      location.href = '/user/dashboard';
+    }).catch(err => {
+      // @TODO: Make this better...
+      alert('Job could not be deleted: ' + err.message);
+    });
+  },
+
   render() {
     let user = this.props.user || false;
     let job = this.props.data || {};
@@ -63,13 +85,16 @@ const JobDetail = React.createClass({
   },
 
   _renderAdminControls(job, user) {
-    if (job.user_id !== user.id && !user.is_admin) { return; }
+    if (!job.id) { return; } // Job is not created yet, don't show controls in preview
+    if (job.user_id !== user.id && !user.is_admin) { return; } // User is not admin or listing creator
+    let showApprove = !job.is_live && user.is_admin;
 
     return (
       <div className="pull-right well job-admin-controls">
         <p>Admin Controls:</p>
+        { showApprove ? <a className="btn btn-primary" href="#" onClick={this.handleApproveClick}>Approve Job Listing</a> : '' }
         <a className="btn btn-default" href={`/jobs/${job.id}/edit`}>Edit</a> &nbsp;
-        <a className="btn btn-danger" href="#">Delete</a>
+        <a className="btn btn-danger" href="#" onClick={this.handleDeleteClick}>Delete</a>
       </div>
     );
   }

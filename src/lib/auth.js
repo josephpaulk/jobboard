@@ -9,6 +9,11 @@ const sdk = require('server/sdk');
  */
 function loadUserByAccessToken() {
   return function (req, res, next) {
+    // If user somehow already loaded, skip this process
+    if (req.user) {
+      next();
+    }
+
     let access_token;
     res.locals.user = false;
 
@@ -22,7 +27,7 @@ function loadUserByAccessToken() {
 
     // Header auth
     let authHeader = req.get('Authorization');
-    if (authHeader && authHeader.indexOf('Bearer ') === 0) {
+    if (!access_token && authHeader && authHeader.indexOf('Bearer ') === 0) {
       access_token = authHeader.replace('Bearer ', '');
     }
 
@@ -58,7 +63,17 @@ function loadUserByAccessToken() {
  */
 function userAuthRequired(options = {}) {
   return function (req, res, next) {
+    let pass = false;
     if (req.user) {
+      pass = true;
+
+      // Is admin required?
+      if (options.is_admin && !req.user.is_admin) {
+        pass = false;
+      }
+    }
+
+    if (pass) {
       next();
     } else {
       if (options.redirectUrl) {

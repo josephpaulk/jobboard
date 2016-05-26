@@ -38,6 +38,8 @@ exports.seed = function(knex, Promise) {
     knex('jobs').insert(generateJobData({ user_id: 1, title: 'Junior Data Analyst' })),
     knex('jobs').insert(generateJobData({ user_id: 2, title: 'Senior UX Designer' })),
     knex('jobs').insert(generateJobData({ user_id: 2, title: 'UI & Graphic Designer' })),
-    knex('jobs').insert(generateJobData({ user_id: 3, title: '.NET Software Engineer – Junior to Mid-Level' }))
+    knex('jobs').insert(generateJobData({ user_id: 2, title: 'UI & Graphic Designer Too', is_live: false })),
+    knex('jobs').insert(generateJobData({ user_id: 3, title: '.NET Software Engineer – Junior to Mid-Level' })),
+    knex('jobs').insert(generateJobData({ user_id: 3, title: 'Receptionist Extraordinaire', is_live: false }))
   );
 };
