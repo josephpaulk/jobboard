@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 
 // Local
 const DAYS_TO_EXPIRE = parseInt(process.env.USER_TOKEN_DAYS_TO_EXPIRE) || 30;
+const FREE_JOB_CREDITS = 5;
 const knex = require('server/db');
 const errors = require('shared/errors');
 const validator = require('server/validator');
@@ -122,6 +123,28 @@ function createAccessTokenForUser(user) {
 }
 
 /**
+ * Create job credits records for user
+ */
+function createJobCreditsForUser(user, amount = 1) {
+  let dt_created = new Date();
+
+  let storedJobCredit = {
+    user_id: user.id,
+    job_id: null,
+    amount,
+    dt_created
+  };
+
+  return knex('user_job_credits')
+    .insert(storedJobCredit)
+    .returning('id')
+    .then(function (ids) {
+      // Return job object with insert id
+      return Object.assign({ id: ids[0] }, storedJobCredit);
+    });
+}
+
+/**
  * Register new user
  */
 function register(fields) {
@@ -152,8 +175,16 @@ function register(fields) {
         .insert(storedUser)
         .returning('id')
         .then(function (id) {
-          // Return job object with insert id
-          return Object.assign({ id: id[0] }, storedUser);
+          let user = Object.assign({ id: id[0] }, storedUser);
+
+          // Create credits, but don't hold up response for it
+          createJobCreditsForUser(user, FREE_JOB_CREDITS);
+
+          return createAccessTokenForUser(user).then((user_access_token) => {
+            // Add 'access_token' and return
+            user.access_token = user_access_token.access_token;
+            return user;
+          });
         })
         .then(_formatForAPI);
     });

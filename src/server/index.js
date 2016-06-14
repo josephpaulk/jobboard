@@ -151,7 +151,7 @@ app.post('/api/users/register', function (req, res) {
   sdk.users()
     .register(req.body)
     .then(function(user) {
-      res.json(user);
+      res.status(201).json(user);
     })
     .catch(sdk.respondWithError(req, res));
 });
