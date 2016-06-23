@@ -18,5 +18,10 @@ exports.seed = function(knex, Promise) {
       knex('users').insert({ name: 'Testy McTesterpants', email: 'user@example.com', password: hashedPassword, is_active: true, is_admin: true, dt_created: now }),
       knex('users').insert({ name: 'Chester Tester', email: 'chester@tester.com', password: hashedPassword, is_active: true, is_admin: false, dt_created: now }),
       knex('users').insert({ name: 'Boaty McBoatface', email: 'boaty@example.com', password: hashedPassword, is_active: true, is_admin: false, dt_created: now })
+    )).then(_ => Promise.join(
+      // Job credits
+      knex('user_job_credits').insert({ user_id: 1, amount: 1, note: 'Seed user', dt_created: now }),
+      knex('user_job_credits').insert({ user_id: 2, amount: 0, note: 'Seed user', dt_created: now }), // No soup (credits) for you!
+      knex('user_job_credits').insert({ user_id: 3, amount: 5, note: 'Seed user', dt_created: now })
     ));
 };

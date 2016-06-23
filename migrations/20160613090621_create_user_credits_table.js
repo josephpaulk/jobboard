@@ -5,6 +5,7 @@ exports.up = function(knex, Promise) {
     t.integer('user_id').index().references('id').inTable('users').onDelete('CASCADE');
     t.integer('job_id').index().references('id').inTable('jobs').onDelete('CASCADE');
     t.integer('amount').notNull();
+    t.string('note').notNull();
     t.dateTime('dt_created').notNull();
   });
 };

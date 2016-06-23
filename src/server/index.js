@@ -91,7 +91,7 @@ app.post('/api/jobs', auth.userAuthRequired(), function (req, res) {
   sdk.jobs()
     .create(params)
     .then(function(job) {
-      res.json(job);
+      res.status(201).json(job);
     })
     .catch(sdk.respondWithError(req, res));
 });

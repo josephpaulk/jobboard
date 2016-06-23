@@ -11,7 +11,7 @@
     "start": "npm run build && npm run minify && NODE_ENV=production node --harmony_default_parameters --harmony-destructuring src/server/index.js",
     "start:dev": "npm run build:dev && source .env && nodemon --delay 2 --harmony_default_parameters --harmony-destructuring src/server/index.js",
     "watch:dev": "fsmonitor -d 'src/' '!server' npm run build:dev",
-    "test": "jasmine-node spec/api"
+    "test": "knex seed:run && jasmine"
   },
   "author": "Vance Lucas",
   "license": "",

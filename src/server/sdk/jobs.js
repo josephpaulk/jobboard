@@ -101,7 +101,12 @@ let job_schema = {
  * @return Promise
  */
 function create(params) {
+  // # of job credits to use for this job posting
+  let use_credits = 1;
+
   return validator.params(params, job_schema)
+    // Ensure user has enough job credits, but still return params for use
+    .then((params) => ensureUserHasJobCredits(params.user_id, use_credits).then(result => params))
     .then(function (params) {
       let now = new Date();
       let dt_expires = new Date();
@@ -129,11 +134,45 @@ function create(params) {
       return knex(TABLE_NAME)
         .insert(storedJob)
         .returning('id')
-        .then(function (id) {
+        .then((id) => {
           // Return job object with insert id
           return Promise.resolve(Object.assign({ id: id[0] }, storedJob));
         })
+        // Use job credit, but still return job row
+        .then((job) => useUserJobCredits(job.user_id, job.id, use_credits).then(result => job))
         .then(_formatForApi);
+    });
+}
+
+/**
+ * Ensure user has enough job credits to create a new job
+ */
+function ensureUserHasJobCredits(user_id, required_credits) {
+  return knex('user_job_credits')
+    .sum('amount')
+    .where({ user_id })
+    .then((result) => {
+      let remaining_credits = parseInt(result[0].sum);
+
+      if (remaining_credits < required_credits) {
+        throw new errors.PaymentRequired(
+          'Not enough job credits remaining. Remaining credits: [' + remaining_credits + ']. Required credits: [' + required_credits + ']'
+        );
+      }
+    });
+}
+
+/**
+ * Use job credits for user
+ */
+function useUserJobCredits(user_id, job_id, use_credits) {
+  return knex('user_job_credits')
+    .insert({
+      user_id,
+      job_id,
+      amount: - parseInt(use_credits),
+      note: 'Job posting',
+      dt_created: new Date()
     });
 }
 

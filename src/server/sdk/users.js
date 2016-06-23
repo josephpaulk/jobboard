@@ -125,13 +125,14 @@ function createAccessTokenForUser(user) {
 /**
  * Create job credits records for user
  */
-function createJobCreditsForUser(user, amount = 1) {
+function createJobCreditsForUser(user, amount, note) {
   let dt_created = new Date();
 
   let storedJobCredit = {
     user_id: user.id,
     job_id: null,
     amount,
+    note,
     dt_created
   };
 
@@ -178,7 +179,7 @@ function register(fields) {
           let user = Object.assign({ id: id[0] }, storedUser);
 
           // Create credits, but don't hold up response for it
-          createJobCreditsForUser(user, FREE_JOB_CREDITS);
+          createJobCreditsForUser(user, FREE_JOB_CREDITS, 'Initial account credits');
 
           return createAccessTokenForUser(user).then((user_access_token) => {
             // Add 'access_token' and return

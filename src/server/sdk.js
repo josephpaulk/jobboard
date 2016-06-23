@@ -63,6 +63,12 @@ function respondWithError(req, res) {
       res.clearCookie('user');
     }
 
+    // 402 Payment Required error
+    if (err instanceof errors.PaymentRequired) {
+      errorJson.error_type = 'payment_required';
+      errorJson.http_status = 402;
+    }
+
     // 403 error
     if (err instanceof errors.Forbidden) {
       errorJson.error_type = 'authorization';

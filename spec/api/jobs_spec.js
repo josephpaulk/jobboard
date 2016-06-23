@@ -36,4 +36,42 @@ describe('jobs API', function () {
       .done(done);
   });
 
+  it('should allow the creation of one new job', function (done) {
+    frisby.post(baseUrl + '/jobs', {
+        title: 'Test Job',
+        location: 'Shawnee, OK',
+        description: 'Some job you really don\'t want.',
+        category: 'programming',
+        telecommute: 'none',
+        apply_url: 'http://example.com',
+        company_name: 'ACME, Inc.',
+        company_url: 'http://example.com',
+        company_logo_url: null,
+        company_email: 'user@example.com'
+      })
+      .expect('status', 201)
+      .expect('jsonContains', {
+        title: 'Test Job'
+      })
+      .then(function (json) {
+        return frisby.post(baseUrl + '/jobs', {
+            title: 'Not Enough Credits',
+            location: 'Shawnee, OK',
+            description: 'This job will not actually be posted, because the user does not have enough credits',
+            category: 'programming',
+            telecommute: 'none',
+            apply_url: 'http://example.com',
+            company_name: 'ACME, Inc.',
+            company_url: 'http://example.com',
+            company_logo_url: null,
+            company_email: 'user@example.com'
+          })
+          .expect('status', 402)
+          .expect('jsonContains', {
+            error_type: 'payment_required'
+          });
+      })
+      .done(done);
+  });
+
 });

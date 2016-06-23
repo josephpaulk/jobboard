@@ -43,6 +43,15 @@ class Forbidden extends ExtendableError {
 }
 
 /**
+ * Payment Required (Produces 402 error)
+ */
+class PaymentRequired extends ExtendableError {
+  constructor(msg) {
+    super(msg);
+  }
+}
+
+/**
  * ValidationError (Produces 400 error)
  */
 class ValidationError extends ExtendableError {
@@ -76,4 +85,4 @@ function throwNotFoundIfNoResults(msg) {
   };
 }
 
-module.exports = { NotFound, NotAuthorized, Forbidden, ValidationError, throwNotFoundIfNoResults };
+module.exports = { Forbidden, NotFound, NotAuthorized, PaymentRequired, ValidationError, throwNotFoundIfNoResults };
