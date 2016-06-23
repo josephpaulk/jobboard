@@ -7,19 +7,22 @@ const sdk = require('server/sdk');
 
 const JobForm = React.createClass({
   getInitialState() {
+    let job = this.props.job || {};
+    let user = this.props.user || {};
+
     return {
       data: {
-        id: this.props.job.id || null,
-        title: this.props.job.title || null,
-        location: this.props.job.location || null,
-        description: this.props.job.description || null,
-        category: this.props.job.category || null,
-        telecommute: this.props.job.telecommute || null,
-        apply_url: this.props.job.apply_url || null,
-        company_name: this.props.job.company_name || null,
-        company_logo_url: this.props.job.company_logo_url || null,
-        company_url: this.props.job.company_url || null,
-        company_email: this.props.job.company_email || null
+        id: job.id || null,
+        title: job.title || null,
+        location: job.location || null,
+        description: job.description || null,
+        category: job.category || null,
+        telecommute: job.telecommute || null,
+        apply_url: job.apply_url || null,
+        company_name: job.company_name || user.company_name || null,
+        company_logo_url: job.company_logo_url || user.company_logo_url || null,
+        company_url: job.company_url || user.company_url || null,
+        company_email: job.company_email || user.company_email || null
       },
       error_message: null,
       field_errors: {}
@@ -69,6 +72,7 @@ const JobForm = React.createClass({
 
   render() {
     let job = this.props.job || {};
+    let user = this.props.user || {};
     let categories = config.jobs.categories;
     let telecommute = config.jobs.telecommute;
 
@@ -136,32 +140,33 @@ const JobForm = React.createClass({
             <div className={"form-group" + getErrorClass('company_name')}>
               {showErrorMessage('company_name')}
               <label htmlFor="company_name" className="control-label">Company Name</label>
-              <input type="text" className="form-control" id="company_name" name="company_name" value={job.company_name} />
+              <input type="text" className="form-control" id="company_name" name="company_name" value={job.company_name || user.company_name} />
               <span className="help-block">Your company or organization's name</span>
             </div>
             <div className={"form-group" + getErrorClass('company_logo_url')}>
               {showErrorMessage('company_logo_url')}
               <label htmlFor="company_logo_url" className="control-label">Company Logo URL</label>
-              <input type="text" className="form-control" id="company_logo_url" name="company_logo_url" value={job.company_logo_url} />
+              <input type="text" className="form-control" id="company_logo_url" name="company_logo_url" value={job.company_logo_url || user.company_logo_url} />
               <span className="help-block">Optional &mdash; URL to your company logo - will be displayed with 200px width.</span>
             </div>
             <div className={"form-group" + getErrorClass('company_url')}>
               {showErrorMessage('company_url')}
               <label htmlFor="company_url" className="control-label">Company Website URL</label>
-              <input type="text" className="form-control" id="company_url" name="company_url" value={job.company_url} />
+              <input type="text" className="form-control" id="company_url" name="company_url" value={job.company_url || user.company_url} />
               <span className="help-block">http://example.com</span>
             </div>
             <div className={"form-group" + getErrorClass('company_email')}>
               {showErrorMessage('company_email')}
               <label htmlFor="company_email" className="control-label">Company Email</label>
-              <input type="text" className="form-control" id="company_email" name="company_email" value={job.company_email} />
+              <input type="text" className="form-control" id="company_email" name="company_email" value={job.company_email || user.company_email} />
               <span className="help-block">Where we'll send your reciept and confirmation email</span>
             </div>
           </fieldset>
 
           <div className="form-group">
-            <button type="submit" className="btn btn-primary btn-lg">Continue to Step 2: Payment</button>
+            <button type="submit" className="btn btn-primary btn-lg">Submit Job For Approval</button>
           </div>
+          <p><small>All jobs postings are FREE and manually approved for a limited time.</small></p>
         </form>
       </div>
     );

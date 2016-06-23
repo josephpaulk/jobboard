@@ -23,11 +23,12 @@ const JobCreate = React.createClass({
 
   render() {
     let job = this.state.job || {};
+    let user = this.props.user || false;
 
     return (
       <div className="row">
         <div className="col-md-5">
-          <JobForm onChange={this.onFormChange} job={job} />
+          <JobForm onChange={this.onFormChange} job={job} user={user} />
         </div>
         <div className="col-md-7">
           <JobDetail data={job} />
