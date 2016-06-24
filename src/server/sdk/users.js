@@ -9,6 +9,7 @@ const DAYS_TO_EXPIRE = parseInt(process.env.USER_TOKEN_DAYS_TO_EXPIRE) || 30;
 const FREE_JOB_CREDITS = 5;
 const knex = require('server/db');
 const errors = require('shared/errors');
+const mailer = require('lib/mailer');
 const validator = require('server/validator');
 const Joi = validator.Joi;
 
@@ -180,6 +181,9 @@ function register(fields) {
 
           // Create credits, but don't hold up response for it
           createJobCreditsForUser(user, FREE_JOB_CREDITS, 'Initial account credits');
+
+          // Send user registration email
+          mailer.sendTemplate('users.register.after', { user }, { to: user.email, bcc: process.env.ADMIN_EMAILS });
 
           return createAccessTokenForUser(user).then((user_access_token) => {
             // Add 'access_token' and return

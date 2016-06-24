@@ -19,6 +19,9 @@ const sharedUtils = require('shared/utils');
 const sdk = require('server/sdk');
 const auth = require('lib/auth');
 
+// Setup
+require('server/setup/mail-templates');
+
 // React components
 const App = require('components/App');
 const JobCreate = require('components/JobCreate');
@@ -29,7 +32,11 @@ let app = express();
 let isDevEnv = process.env.NODE_ENV === 'development';
 
 // Ensure required ENV vars are set
-let requiredEnv = ['DATABASE_URL', 'NODE_ENV', 'COOKIE_SECRET', 'JOBS_DAYS_TO_EXPIRE', 'USER_TOKEN_DAYS_TO_EXPIRE'];
+let requiredEnv = [
+  'DATABASE_URL', 'NODE_ENV', 'COOKIE_SECRET',
+  'JOBS_DAYS_TO_EXPIRE', 'USER_TOKEN_DAYS_TO_EXPIRE',
+  'ADMIN_EMAILS', 'FROM_EMAIL', 'MAILGUN_API_URL', 'MAILGUN_API_KEY'
+];
 let unsetEnv = requiredEnv.filter(function (env) { return !(typeof process.env[env] !== 'undefined'); });
 if (unsetEnv.length > 0) {
   throw new Error("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
@@ -86,10 +93,8 @@ app.get('/api/jobs', auth.userAuthRequired(), function (req, res) {
 
 // Post new job
 app.post('/api/jobs', auth.userAuthRequired(), function (req, res) {
-  let params = Object.assign({}, req.body, { user_id: req.user.id });
-
   sdk.jobs()
-    .create(params)
+    .create(req.user, req.body)
     .then(function(job) {
       res.status(201).json(job);
     })

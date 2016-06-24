@@ -1,5 +1,6 @@
 'use strict';
 
+const fetch = require('isomorphic-fetch');
 const Cookies = require('cookies-js');
 const baseUrl = '/api/';
 

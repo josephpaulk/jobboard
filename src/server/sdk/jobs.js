@@ -6,6 +6,7 @@ const knex = require('server/db');
 const config = require('shared/config');
 const sharedUtils = require('shared/utils');
 const errors = require('shared/errors');
+const mailer = require('lib/mailer');
 const validator = require('server/validator');
 const Joi = validator.Joi;
 
@@ -82,7 +83,6 @@ function findByUserId(user_id) {
 }
 
 let job_schema = {
-  'user_id': Joi.number().required(),
   'title': Joi.string().max(60).required(),
   'location': Joi.string().max(60).required(),
   'description': Joi.string().required(),
@@ -100,20 +100,20 @@ let job_schema = {
  *
  * @return Promise
  */
-function create(params) {
+function create(user, params) {
   // # of job credits to use for this job posting
   let use_credits = 1;
 
   return validator.params(params, job_schema)
     // Ensure user has enough job credits, but still return params for use
-    .then((params) => ensureUserHasJobCredits(params.user_id, use_credits).then(result => params))
+    .then((params) => ensureUserHasJobCredits(user.id, use_credits).then(result => params))
     .then(function (params) {
       let now = new Date();
       let dt_expires = new Date();
       dt_expires.setDate(dt_expires.getDate() + DAYS_TO_EXPIRE);
 
       let storedJob = {
-        user_id: params.user_id,
+        user_id: user.id,
         title: params.title,
         location: params.location,
         description: params.description,
@@ -140,6 +140,11 @@ function create(params) {
         })
         // Use job credit, but still return job row
         .then((job) => useUserJobCredits(job.user_id, job.id, use_credits).then(result => job))
+        .then((job) => {
+          // Send job created email, but don't wait for it to return response
+          mailer.sendTemplate('jobs.create.after', { job }, { to: user.email, bcc: process.env.ADMIN_EMAILS });
+          return job;
+        })
         .then(_formatForApi);
     });
 }

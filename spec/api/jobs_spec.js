@@ -6,11 +6,13 @@ const baseUrl = 'http://localhost:1339/api';
 describe('jobs API', function () {
 
   let access_token;
-  beforeAll(function (done) {
+  beforeEach(function (done) {
+    if (access_token) { return done(); }
+
     // Login as admin user to get and store access_token, then send it in each subsequent request
     frisby.post(baseUrl + '/users/login', {
         body: {
-          email: 'user@example.com',
+          email: 'czaries@gmail.com',
           password: 'password'
         }
       })
@@ -49,10 +51,10 @@ describe('jobs API', function () {
         company_logo_url: null,
         company_email: 'user@example.com'
       })
-      .expect('status', 201)
       .expect('jsonContains', {
         title: 'Test Job'
       })
+      .expect('status', 201)
       .then(function (json) {
         return frisby.post(baseUrl + '/jobs', {
             title: 'Not Enough Credits',
@@ -66,10 +68,10 @@ describe('jobs API', function () {
             company_logo_url: null,
             company_email: 'user@example.com'
           })
-          .expect('status', 402)
           .expect('jsonContains', {
             error_type: 'payment_required'
-          });
+          })
+          .expect('status', 402);
       })
       .done(done);
   });
